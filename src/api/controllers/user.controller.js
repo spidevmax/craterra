@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
 const { sendResponse } = require("../../utils/sendResponse");
@@ -24,16 +24,16 @@ const { createError } = require("../../utils/createError");
  */
 
 const getMyProfile = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user._id).select("-password");
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+	try {
+		const user = await User.findById(req.user._id).select("-password");
+		if (!user) {
+			throw createError(404, "User not found");
+		}
 
-    return sendResponse(res, 200, true, "User fetched successfully", user);
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(res, 200, true, "User fetched successfully", user);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -62,59 +62,59 @@ const getMyProfile = async (req, res, next) => {
  */
 
 const updateMyProfile = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+	try {
+		const user = await User.findById(req.user._id);
+		if (!user) {
+			throw createError(404, "User not found");
+		}
 
-    // An user with the role "user" cannot change any role
-    if (req.body.role) {
-      //      delete req.body.role;
-      throw createError(403, "You are not allowed to change your role");
-    }
+		// An user with the role "user" cannot change any role
+		if (req.body.role) {
+			//      delete req.body.role;
+			throw createError(403, "You are not allowed to change your role");
+		}
 
-    // The user cannot change their password in this route
-    if (req.body.password) {
-      throw createError(
-        403,
-        "You are not allowed to change your password here. Use /users/change-password instead"
-      );
-    }
+		// The user cannot change their password in this route
+		if (req.body.password) {
+			throw createError(
+				403,
+				"You are not allowed to change your password here. Use /users/change-password instead",
+			);
+		}
 
-    // Update fields
-    if (req.body.name) {
-      user.name = req.body.name.trim();
-    }
-    if (req.body.email) {
-      user.email = req.body.email.toLowerCase().trim();
-    }
+		// Update fields
+		if (req.body.name) {
+			user.name = req.body.name.trim();
+		}
+		if (req.body.email) {
+			user.email = req.body.email.toLowerCase().trim();
+		}
 
-    // If there is a new image, replace the previous one
-    if (req.file) {
-      if (user.profileImageId) {
-        await deleteImgCloudinary(user.profileImageId);
-      }
-      user.profileImageUrl = req.file.path;
-      user.profileImageId = req.file.filename;
-    }
+		// If there is a new image, replace the previous one
+		if (req.file) {
+			if (user.profileImageId) {
+				await deleteImgCloudinary(user.profileImageId);
+			}
+			user.profileImageUrl = req.file.path;
+			user.profileImageId = req.file.filename;
+		}
 
-    const updatedUser = await user.save();
+		const updatedUser = await user.save();
 
-    // Delete password before updating
-    const userReponse = updatedUser.toObject();
-    delete userReponse.password;
+		// Delete password before updating
+		const userReponse = updatedUser.toObject();
+		delete userReponse.password;
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Profile updated successfully",
-      userReponse
-    );
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(
+			res,
+			200,
+			true,
+			"Profile updated successfully",
+			userReponse,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -142,44 +142,44 @@ const updateMyProfile = async (req, res, next) => {
  */
 
 const changeMyPassword = async (req, res, next) => {
-  try {
-    const { currentPassword, newPassword, confirmPassword } = req.body;
+	try {
+		const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      throw createError(400, "All fields are required");
-    }
+		if (!currentPassword || !newPassword || !confirmPassword) {
+			throw createError(400, "All fields are required");
+		}
 
-    if (newPassword != confirmPassword) {
-      throw createError(400, "New passwords do not match");
-    }
+		if (newPassword !== confirmPassword) {
+			throw createError(400, "New passwords do not match");
+		}
 
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+		const user = await User.findById(req.user._id);
+		if (!user) {
+			throw createError(404, "User not found");
+		}
 
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      throw createError(401, "Current password is incorrect");
-    }
+		const isMatch = await bcrypt.compare(currentPassword, user.password);
+		if (!isMatch) {
+			throw createError(401, "Current password is incorrect");
+		}
 
-    if (newPassword.length < 8) {
-      throw createError(400, "Password must be at least 8 characters long");
-    }
+		if (newPassword.length < 8) {
+			throw createError(400, "Password must be at least 8 characters long");
+		}
 
-    user.password = newPassword;
-    await user.save();
+		user.password = newPassword;
+		await user.save();
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Password changed successfully",
-      user.password
-    );
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(
+			res,
+			200,
+			true,
+			"Password changed successfully",
+			user.password,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -204,30 +204,30 @@ const changeMyPassword = async (req, res, next) => {
  */
 
 const deleteMyAccount = async (req, res, next) => {
-  try {
-    // Search for the authenticated user
-    const user = await User.findById(req.user._id);
+	try {
+		// Search for the authenticated user
+		const user = await User.findById(req.user._id);
 
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+		if (!user) {
+			throw createError(404, "User not found");
+		}
 
-    //Delete the profile picture
-    if (user.profileImageId) {
-      await deleteImgCloudinary(user.profileImageId);
-    }
+		//Delete the profile picture
+		if (user.profileImageId) {
+			await deleteImgCloudinary(user.profileImageId);
+		}
 
-    await User.findByIdAndDelete(req.user._id);
+		await User.findByIdAndDelete(req.user._id);
 
-    return sendResponse(res, 200, true, "Account deleted successfully", user);
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(res, 200, true, "Account deleted successfully", user);
+	} catch (error) {
+		next(error);
+	}
 };
 
 module.exports = {
-  getMyProfile,
-  updateMyProfile,
-  changeMyPassword,
-  deleteMyAccount,
+	getMyProfile,
+	updateMyProfile,
+	changeMyPassword,
+	deleteMyAccount,
 };

@@ -1,0 +1,145 @@
+# EditorConfig helps maintain consistent coding styles across different editors and IDEs
+# for multiple developers working on the same project.
+# https://editorconfig.org
+
+# Stop looking for .editorconfig files in parent directories
+root = true
+
+# ============================================================================
+# UNIVERSAL SETTINGS
+# ============================================================================
+# Applied to all files in the project
+
+[*]
+# Use UTF-8 encoding for all files
+charset = utf-8
+
+# End files with a newline to avoid conflicts in version control
+insert_final_newline = true
+
+# Remove trailing whitespace from the end of lines
+trim_trailing_whitespace = true
+
+# ============================================================================
+# JAVASCRIPT/TYPESCRIPT
+# ============================================================================
+# Configuration for .js, .jsx, .ts, .tsx files
+# Follows Biome formatting standards and Node.js best practices
+
+[*.{js,jsx}]
+# Use tabs for indentation (aligns with Biome default)
+indent_style = tab
+indent_size = 1
+
+# Max line length for readability
+max_line_length = 100
+
+# Unix-style line endings (LF)
+end_of_line = lf
+
+[*.{ts,tsx}]
+indent_style = tab
+indent_size = 1
+max_line_length = 100
+end_of_line = lf
+
+# ============================================================================
+# JSON FILES
+# ============================================================================
+# Configuration for .json files (package.json, tsconfig.json, etc.)
+
+[*.{json,jsonc}]
+# Use 2 spaces for JSON indentation (standard for Node.js ecosystem)
+indent_style = space
+indent_size = 2
+end_of_line = lf
+max_line_length = 120
+
+# ============================================================================
+# CONFIGURATION FILES
+# ============================================================================
+# YAML, TOML, and other config files
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+[*.toml]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+[*.env*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+
+[.editorconfig]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+# ============================================================================
+# MARKDOWN & DOCUMENTATION
+# ============================================================================
+
+[*.md]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+# Markdown files may use trailing whitespace for line breaks
+trim_trailing_whitespace = false
+
+[*.{txt,csv}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+# ============================================================================
+# BUILD & DEPENDENCY FILES
+# ============================================================================
+
+[*.lock]
+indent_style = auto
+# Lock files should preserve their format
+insert_final_newline = false
+trim_trailing_whitespace = false
+
+# ============================================================================
+# TEST FILES
+# ============================================================================
+# Configuration for Jest test files
+
+[*.test.js]
+indent_style = tab
+indent_size = 1
+end_of_line = lf
+
+[*.spec.js]
+indent_style = tab
+indent_size = 1
+end_of_line = lf
+
+# ============================================================================
+# SHELL SCRIPTS
+# ============================================================================
+
+[*.{sh,bash}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+# ============================================================================
+# GIT & VERSION CONTROL
+# ============================================================================
+
+[.gitignore]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+
+[.gitattributes]
+indent_style = space
+indent_size = 2
+end_of_line = lf

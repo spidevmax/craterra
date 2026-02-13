@@ -1,5 +1,5 @@
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
-const Album = require("../models/album.model");
+const Album = require("../models/Album.model");
 const { sendResponse } = require("../../utils/sendResponse");
 const { createError } = require("../../utils/createError");
 
@@ -18,33 +18,33 @@ const { createError } = require("../../utils/createError");
  */
 
 const getMyAlbums = async (req, res, next) => {
-  try {
-    const userId = req.user._id;
+	try {
+		const userId = req.user._id;
 
-    const myAlbums = await Album.find({ addedBy: userId }).sort({
-      createdAt: -1,
-    }); // Sort by creation date, newest first
+		const myAlbums = await Album.find({ addedBy: userId }).sort({
+			createdAt: -1,
+		}); // Sort by creation date, newest first
 
-    if (!myAlbums.length) {
-      return sendResponse(
-        res,
-        200,
-        true,
-        "You haven't added any albums yet",
-        []
-      );
-    }
+		if (!myAlbums.length) {
+			return sendResponse(
+				res,
+				200,
+				true,
+				"You haven't added any albums yet",
+				[],
+			);
+		}
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Albums fetched successfully",
-      myAlbums
-    );
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(
+			res,
+			200,
+			true,
+			"Albums fetched successfully",
+			myAlbums,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -63,17 +63,17 @@ const getMyAlbums = async (req, res, next) => {
  */
 
 const getAlbumById = async (req, res, next) => {
-  try {
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Album fetched successfully",
-      req.album
-    );
-  } catch (error) {
-    next(error);
-  }
+	try {
+		return sendResponse(
+			res,
+			200,
+			true,
+			"Album fetched successfully",
+			req.album,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -98,53 +98,53 @@ const getAlbumById = async (req, res, next) => {
  */
 
 const postAlbum = async (req, res, next) => {
-  try {
-    const { title, artists = [] } = req.body;
-    const addedBy = req.user._id;
+	try {
+		const { title, artists = [] } = req.body;
+		const addedBy = req.user._id;
 
-    // Normalize text only for duplicate checking
-    const normalizedTitle = title.trim().toLowerCase();
-    const normalizedArtists = artists.map((a) => a.trim().toLowerCase());
+		// Normalize text only for duplicate checking
+		const normalizedTitle = title.trim().toLowerCase();
+		const normalizedArtists = artists.map((a) => a.trim().toLowerCase());
 
-    // Check if album already exists for this user
-    const albumExist = await Album.findOne({
-      title: normalizedTitle,
-      artists: { $all: normalizedArtists, $size: normalizedArtists.length },
-      addedBy,
-    });
+		// Check if album already exists for this user
+		const albumExist = await Album.findOne({
+			title: normalizedTitle,
+			artists: { $all: normalizedArtists, $size: normalizedArtists.length },
+			addedBy,
+		});
 
-    if (albumExist) {
-      throw createError(400, "This album already exists in your collection");
-    }
+		if (albumExist) {
+			throw createError(400, "This album already exists in your collection");
+		}
 
-    // Create album
-    const newAlbum = new Album({
-      ...req.body,
-      titleNormalized: normalizedTitle,
-      artistsNormalized: normalizedArtists,
-      addedBy,
-    });
+		// Create album
+		const newAlbum = new Album({
+			...req.body,
+			titleNormalized: normalizedTitle,
+			artistsNormalized: normalizedArtists,
+			addedBy,
+		});
 
-    if (req.file) {
-      newAlbum.coverArtUrl = req.file.path;
-      newAlbum.coverArtId = req.file.filename;
-    }
+		if (req.file) {
+			newAlbum.coverArtUrl = req.file.path;
+			newAlbum.coverArtId = req.file.filename;
+		}
 
-    const albumSaved = await newAlbum.save();
+		const albumSaved = await newAlbum.save();
 
-    return sendResponse(
-      res,
-      201,
-      true,
-      "Album created successfully",
-      albumSaved
-    );
-  } catch (error) {
-    if (req.file?.filename) {
-      await deleteImgCloudinary(req.file.filename);
-    }
-    next(error);
-  }
+		return sendResponse(
+			res,
+			201,
+			true,
+			"Album created successfully",
+			albumSaved,
+		);
+	} catch (error) {
+		if (req.file?.filename) {
+			await deleteImgCloudinary(req.file.filename);
+		}
+		next(error);
+	}
 };
 
 /**
@@ -168,40 +168,40 @@ const postAlbum = async (req, res, next) => {
  */
 
 const updateAlbum = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const prev = await Album.findById(id);
+	try {
+		const { id } = req.params;
+		const prev = await Album.findById(id);
 
-    if (!prev) {
-      throw createError(404, "Album not found");
-    }
+		if (!prev) {
+			throw createError(404, "Album not found");
+		}
 
-    const updates = { ...req.body };
-    let newCoverArtId = null;
+		const updates = { ...req.body };
+		let newCoverArtId = null;
 
-    if (req.file) {
-      updates.coverArtUrl = req.file.path;
-      updates.coverArtId = req.file.filename;
-      newCoverArtId = req.file.filename;
-    }
+		if (req.file) {
+			updates.coverArtUrl = req.file.path;
+			updates.coverArtId = req.file.filename;
+			newCoverArtId = req.file.filename;
+		}
 
-    const updated = await Album.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true,
-    });
+		const updated = await Album.findByIdAndUpdate(id, updates, {
+			new: true,
+			runValidators: true,
+		});
 
-    // Delete the previous image after updating the fields successfully
-    if (newCoverArtId && prev.coverArtId) {
-      await deleteImgCloudinary(prev.coverArtId);
-    }
+		// Delete the previous image after updating the fields successfully
+		if (newCoverArtId && prev.coverArtId) {
+			await deleteImgCloudinary(prev.coverArtId);
+		}
 
-    return sendResponse(res, 200, true, "Album updated successfully", updated);
-  } catch (error) {
-    if (req.file?.filename) {
-      await deleteImgCloudinary(req.file.filename);
-    }
-    next(error);
-  }
+		return sendResponse(res, 200, true, "Album updated successfully", updated);
+	} catch (error) {
+		if (req.file?.filename) {
+			await deleteImgCloudinary(req.file.filename);
+		}
+		next(error);
+	}
 };
 
 /**
@@ -221,31 +221,31 @@ const updateAlbum = async (req, res, next) => {
  */
 
 const deleteAlbum = async (req, res, next) => {
-  try {
-    // If there is an image, delete it
-    if (req.album.coverArtId) {
-      await deleteImgCloudinary(req.album.coverArtId);
-    }
+	try {
+		// If there is an image, delete it
+		if (req.album.coverArtId) {
+			await deleteImgCloudinary(req.album.coverArtId);
+		}
 
-    //Delete the album
-    await Album.findByIdAndDelete(req.album._id);
+		//Delete the album
+		await Album.findByIdAndDelete(req.album._id);
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Album deleted successfully",
-      req.album
-    );
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(
+			res,
+			200,
+			true,
+			"Album deleted successfully",
+			req.album,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 module.exports = {
-  getMyAlbums,
-  getAlbumById,
-  postAlbum,
-  updateAlbum,
-  deleteAlbum,
+	getMyAlbums,
+	getAlbumById,
+	postAlbum,
+	updateAlbum,
+	deleteAlbum,
 };

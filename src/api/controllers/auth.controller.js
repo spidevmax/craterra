@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const User = require("../models/User.model");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../../utils/token");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
@@ -30,34 +30,34 @@ const { createError } = require("../../utils/createError");
  */
 
 const registerUser = async (req, res, next) => {
-  try {
-    const user = new User(req.body);
+	try {
+		const user = new User(req.body);
 
-    // Check if the email already exists
-    const userExist = await User.findOne({ email: user.email });
-    if (userExist) {
-      if (req.file) {
-        await deleteImgCloudinary(req.file.filename);
-      }
-      throw createError(400, "This user already exists");
-    }
+		// Check if the email already exists
+		const userExist = await User.findOne({ email: user.email });
+		if (userExist) {
+			if (req.file) {
+				await deleteImgCloudinary(req.file.filename);
+			}
+			throw createError(400, "This user already exists");
+		}
 
-    // Upload image to Cloudinary if provided
-    if (req.file) {
-      user.profileImageUrl = req.file.path; // Cloudinary URL
-      user.profileImageId = req.file.filename; // Cloudinary public_id
-    }
+		// Upload image to Cloudinary if provided
+		if (req.file) {
+			user.profileImageUrl = req.file.path; // Cloudinary URL
+			user.profileImageId = req.file.filename; // Cloudinary public_id
+		}
 
-    const userDB = await user.save();
+		const userDB = await user.save();
 
-    return sendResponse(res, 201, true, "User registered successfully", userDB);
-  } catch (error) {
-    // Clean up image in case of error
-    if (req.file?.filename) {
-      await deleteImgCloudinary(req.file.filename);
-    }
-    return next(error);
-  }
+		return sendResponse(res, 201, true, "User registered successfully", userDB);
+	} catch (error) {
+		// Clean up image in case of error
+		if (req.file?.filename) {
+			await deleteImgCloudinary(req.file.filename);
+		}
+		return next(error);
+	}
 };
 
 /**
@@ -83,25 +83,25 @@ const registerUser = async (req, res, next) => {
  */
 
 const loginUser = async (req, res, next) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
+	try {
+		const user = await User.findOne({ email: req.body.email }).select("+password");
 
-    if (!user) {
-      throw createError(404, "User not found");
-    }
+		if (!user) {
+			throw createError(404, "User not found");
+		}
 
-    if (bcrypt.compareSync(req.body.password, user.password)) {
-      const token = generateToken(user._id, user.email);
-      return sendResponse(res, 200, true, "Token created successfully", token);
-    } else {
-      throw createError(401, "Invalid credentials");
-    }
-  } catch (error) {
-    next(error);
-  }
+		if (bcrypt.compareSync(req.body.password, user.password)) {
+			const token = generateToken(user._id, user.email);
+			return sendResponse(res, 200, true, "Token created successfully", token);
+		} else {
+			throw createError(401, "Invalid credentials");
+		}
+	} catch (error) {
+		next(error);
+	}
 };
 
 module.exports = {
-  registerUser,
-  loginUser,
+	registerUser,
+	loginUser,
 };

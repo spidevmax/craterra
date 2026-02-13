@@ -1,24 +1,16 @@
 # Craterra
 
-PUBLIC:
-├── POST /auth/register
-└── POST /auth/login
+RESTful API built with modern web technologies (Node.js, Express and MongoDB) for managing music albums and user accounts. 
+It supports authentication, role-based access control, image uploads via Cloudinary and advanced album metadata.
 
-AUTHENTICATED (verifyToken):
-├── Albums
-│ ├── GET /albums (mis álbums)
-│ ├── GET /albums/:id (+ isOwner)
-│ ├── POST /albums
-│ ├── PUT /albums/:id (+ isOwner)
-│ └── DELETE /albums/:id (+ isOwner)
-├── Users
-│ ├── GET /users/me
-│ ├── PUT /users/me
-│ ├── PUT /users/change-password
-│ └── DELETE /users/me
+## About
 
-ADMIN ONLY (verifyToken + isAdmin):
-├── GET /admin/users
-├── DELETE /admin/users/:id
-├── GET /admin/albums
-└── DELETE /admin/albums/:id
+## Features
+
+## Tech Stack
+
+## Project Structure
+
+## Installation
+
+## Environment Variables

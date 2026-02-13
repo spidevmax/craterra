@@ -1,5 +1,5 @@
-const Album = require("../api/models/album.model");
-const User = require("../api/models/user.model");
+const Album = require("../api/models/Album.model");
+const User = require("../api/models/User.model");
 const { verifyToken } = require("../utils/token");
 const { createError } = require("../utils/createError");
 
@@ -32,33 +32,33 @@ const { createError } = require("../utils/createError");
  */
 
 const isAuth = (allowedRoles = []) => {
-  return async (req, res, next) => {
-    try {
-      const token = req.headers.authorization?.replace("Bearer ", "");
+	return async (req, _res, next) => {
+		try {
+			const token = req.headers.authorization?.replace("Bearer ", "");
 
-      if (!token) {
-        throw createError(401, "No token provided");
-      }
+			if (!token) {
+				throw createError(401, "No token provided");
+			}
 
-      const decoded = verifyToken(token);
+			const decoded = verifyToken(token);
 
-      const user = await User.findById(decoded.id);
+			const user = await User.findById(decoded.id);
 
-      if (!user) {
-        throw createError(401, "Unauthorized: No user found in request");
-      }
+			if (!user) {
+				throw createError(401, "Unauthorized: No user found in request");
+			}
 
-      req.user = user;
+			req.user = user;
 
-      if (allowedRoles.length && !allowedRoles.includes(user.role)) {
-        throw createError(403, `Access denied for role: ${user.role}`);
-      }
+			if (allowedRoles.length && !allowedRoles.includes(user.role)) {
+				throw createError(403, `Access denied for role: ${user.role}`);
+			}
 
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
+			next();
+		} catch (error) {
+			next(error);
+		}
+	};
 };
 
 /**
@@ -80,23 +80,23 @@ const isAuth = (allowedRoles = []) => {
  * - Works in combination with isAuth middleware to ensure req.user exists.
  */
 
-const isOwner = async (req, res, next) => {
-  try {
-    const album = await Album.findById(req.params.id);
+const isOwner = async (req, _res, next) => {
+	try {
+		const album = await Album.findById(req.params.id);
 
-    if (!album) {
-      return next(createError(404, "Album not found"));
-    }
+		if (!album) {
+			return next(createError(404, "Album not found"));
+		}
 
-    if (album.addedBy.toString() !== req.user.id) {
-      return next(createError(403, "Not authorized"));
-    }
+		if (album.addedBy.toString() !== req.user.id) {
+			return next(createError(403, "Not authorized"));
+		}
 
-    req.album = album; // pass the album to the next middleware/controller
-    next();
-  } catch (error) {
-    next(error); // send DB/network errors to global handler
-  }
+		req.album = album; // pass the album to the next middleware/controller
+		next();
+	} catch (error) {
+		next(error); // send DB/network errors to global handler
+	}
 };
 
 module.exports = { isAuth, isOwner };

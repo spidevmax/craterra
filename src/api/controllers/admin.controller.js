@@ -1,7 +1,8 @@
-const Album = require("../models/album.model");
-const User = require("../models/user.model");
+const Album = require("../models/Album.model");
+const User = require("../models/User.model");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
 const { sendResponse } = require("../../utils/sendResponse");
+const { createError } = require("../../utils/createError");
 
 /**
  * Controller: getAllAlbums
@@ -23,12 +24,12 @@ const { sendResponse } = require("../../utils/sendResponse");
  */
 
 const getAllAlbums = async (req, res, next) => {
-  try {
-    const albums = await Album.find().populate("addedBy", "name email");
-    return sendResponse(res, 200, true, "Albums fetched successfully", albums);
-  } catch (error) {
-    next(error);
-  }
+	try {
+		const albums = await Album.find().populate("addedBy", "name email");
+		return sendResponse(res, 200, true, "Albums fetched successfully", albums);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -51,25 +52,25 @@ const getAllAlbums = async (req, res, next) => {
  */
 
 const deleteAlbum = async (req, res, next) => {
-  try {
-    // If there is an image, delete it
-    if (req.album.coverArtId) {
-      await deleteImgCloudinary(req.album.coverArtId);
-    }
+	try {
+		// If there is an image, delete it
+		if (req.album.coverArtId) {
+			await deleteImgCloudinary(req.album.coverArtId);
+		}
 
-    //Delete the album
-    await Album.findByIdAndDelete(req.album._id);
+		//Delete the album
+		await Album.findByIdAndDelete(req.album._id);
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Album deleted successfully",
-      req.album
-    );
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(
+			res,
+			200,
+			true,
+			"Album deleted successfully",
+			req.album,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -90,12 +91,12 @@ const deleteAlbum = async (req, res, next) => {
  */
 
 const getAllUsers = async (req, res, next) => {
-  try {
-    const users = await User.find();
-    return sendResponse(res, 200, true, "Users fetched successfully", users);
-  } catch (error) {
-    next(error);
-  }
+	try {
+		const users = await User.find();
+		return sendResponse(res, 200, true, "Users fetched successfully", users);
+	} catch (error) {
+		next(error);
+	}
 };
 
 /**
@@ -118,36 +119,36 @@ const getAllUsers = async (req, res, next) => {
  */
 
 const deleteUser = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+	try {
+		const { id } = req.params;
 
-    // Delete the user and return the deleted document
-    const userDeleted = await User.findByIdAndDelete(id);
+		// Delete the user and return the deleted document
+		const userDeleted = await User.findByIdAndDelete(id);
 
-    if (!userDeleted) {
-      throw createError(404, "User not found");
-    }
+		if (!userDeleted) {
+			throw createError(404, "User not found");
+		}
 
-    // Delete Cloudinary image if it exists
-    if (userDeleted.profileImageId) {
-      await deleteImgCloudinary(userDeleted.profileImageId);
-    }
+		// Delete Cloudinary image if it exists
+		if (userDeleted.profileImageId) {
+			await deleteImgCloudinary(userDeleted.profileImageId);
+		}
 
-    return sendResponse(
-      res,
-      200,
-      true,
-      "User deleted successfully",
-      userDeleted
-    );
-  } catch (error) {
-    next(error);
-  }
+		return sendResponse(
+			res,
+			200,
+			true,
+			"User deleted successfully",
+			userDeleted,
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 module.exports = {
-  getAllAlbums,
-  deleteAlbum,
-  getAllUsers,
-  deleteUser,
+	getAllAlbums,
+	deleteAlbum,
+	getAllUsers,
+	deleteUser,
 };

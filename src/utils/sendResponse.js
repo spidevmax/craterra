@@ -11,12 +11,12 @@
  */
 
 const sendResponse = (res, statusCode, success, message, data = null) => {
-  const response = { success, message };
+	const response = { success, message };
 
-  // Only include "data" if it's meaningful (not null or undefined)
-  if (data) response.data = data;
+	// Only include "data" if it's meaningful (not null or undefined)
+	if (data) response.data = data;
 
-  return res.status(statusCode).json(response);
+	return res.status(statusCode).json(response);
 };
 
 module.exports = { sendResponse };
