@@ -3,9 +3,10 @@ const { body } = require("express-validator");
 /**
  * Validations for user registration
  * Ensures:
- * - name: non-empty string
- * - email: valid email format, not already registered
+ * - name: non-empty string (2-100 chars)
+ * - email: valid email format
  * - password: minimum 8 characters
+ * - role: optional, must be 'user' or 'admin' (defaults to 'user' in model)
  */
 const registerValidations = [
 	body("name")
@@ -24,6 +25,11 @@ const registerValidations = [
 	body("password")
 		.isLength({ min: 8 })
 		.withMessage("Password must be at least 8 characters long"),
+
+	body("role")
+		.optional()
+		.isIn(["user", "admin"])
+		.withMessage("Role must be either 'user' or 'admin'"),
 ];
 
 /**
@@ -39,9 +45,7 @@ const loginValidations = [
 		.isEmail()
 		.withMessage("Please provide a valid email address"),
 
-	body("password")
-		.notEmpty()
-		.withMessage("Password is required"),
+	body("password").notEmpty().withMessage("Password is required"),
 ];
 
 module.exports = {

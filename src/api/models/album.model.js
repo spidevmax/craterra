@@ -115,10 +115,6 @@ albumSchema.pre("save", function (next) {
 	next();
 });
 
-albumSchema.index({ title: 1 });
-albumSchema.index({ genres: 1 });
-albumSchema.index({ addedBy: 1 });
-
 const Album = mongoose.model("Album", albumSchema);
 
 module.exports = Album;

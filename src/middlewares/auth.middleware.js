@@ -32,7 +32,7 @@ const { createError } = require("../utils/createError");
  */
 
 const isAuth = (allowedRoles = []) => {
-	return async (req, _res, next) => {
+	return async (req, res, next) => {
 		try {
 			const token = req.headers.authorization?.replace("Bearer ", "");
 
@@ -80,7 +80,7 @@ const isAuth = (allowedRoles = []) => {
  * - Works in combination with isAuth middleware to ensure req.user exists.
  */
 
-const isOwner = async (req, _res, next) => {
+const isOwner = async (req, res, next) => {
 	try {
 		const album = await Album.findById(req.params.id);
 

@@ -17,6 +17,11 @@ const updateProfileValidations = [
 		.toLowerCase()
 		.isEmail()
 		.withMessage("Please provide a valid email address"),
+
+	body("role")
+		.optional()
+		.isIn(["user", "admin"])
+		.withMessage("Role must be either 'user' or 'admin'"),
 ];
 
 /**

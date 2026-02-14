@@ -11,49 +11,55 @@ const { createError } = require("../../utils/createError");
  * Handles user registration by creating a new user in the database.
  *
  * Workflow:
- * 1. Creates a new User instance from `req.body`.
- * 2. Checks if a user with the same email already exists — if so, deletes any
- *    uploaded image and throws a 400 error.
- * 3. If a profile image is uploaded, stores the Cloudinary URL and public ID.
- * 4. Saves the user to the database.
- * 5. Returns a 201 response with the created user data.
+ * 1. Checks if a user with the same email already exists.
+ * 2. If user exists, deletes any uploaded image from Cloudinary and throws a 400 error.
+ * 3. Creates a new User instance from `req.body`.
+ * 4. If a profile image is uploaded, stores the Cloudinary URL and public ID.
+ * 5. Saves the user to the database.
+ * 6. Returns a 201 response with the created user data.
  *
  * Error Handling:
- * - If an error occurs during registration, any uploaded image is deleted from
- *   Cloudinary to avoid orphaned files.
+ * - If validation errors occur, the image is deleted by handleValidationErrors middleware.
+ * - If user already exists, deletes uploaded image to avoid orphaned files.
+ * - If database save fails, deletes image to avoid orphaned files.
  * - All errors are passed to the global error handler via `next(error)`.
  *
  * Notes:
  * - Passwords are hashed automatically via a Mongoose pre-save hook.
- * - Email uniqueness is enforced both in the schema and manually checked here
- *   for better UX feedback.
+ * - Email uniqueness is enforced both in the schema and manually checked here for better UX feedback.
+ * - The imageUploaded flag prevents duplicate image deletion attempts.
+ * - Profile image is optional during registration.
  */
 
 const registerUser = async (req, res, next) => {
-	try {
-		const user = new User(req.body);
+	let imageUploaded = false;
 
-		// Check if the email already exists
-		const userExist = await User.findOne({ email: user.email });
+	try {
+		// Check if the email already exists BEFORE processing
+		const userExist = await User.findOne({ email: req.body.email });
 		if (userExist) {
-			if (req.file) {
+			// Delete the uploaded image since user already exists
+			if (req.file?.filename) {
 				await deleteImgCloudinary(req.file.filename);
 			}
 			throw createError(400, "This user already exists");
 		}
 
+		const user = new User(req.body);
+
 		// Upload image to Cloudinary if provided
 		if (req.file) {
 			user.profileImageUrl = req.file.path; // Cloudinary URL
 			user.profileImageId = req.file.filename; // Cloudinary public_id
+			imageUploaded = true;
 		}
 
 		const userDB = await user.save();
 
 		return sendResponse(res, 201, true, "User registered successfully", userDB);
 	} catch (error) {
-		// Clean up image in case of error
-		if (req.file?.filename) {
+		// Clean up image only if it was successfully assigned to user but save failed
+		if (imageUploaded && error.status !== 400) {
 			await deleteImgCloudinary(req.file.filename);
 		}
 		return next(error);
@@ -66,25 +72,31 @@ const registerUser = async (req, res, next) => {
  * Authenticates a user by verifying their email and password, and returns a JWT.
  *
  * Workflow:
- * 1. Looks up the user by email from `req.body.email`.
+ * 1. Looks up the user by email from `req.body.email` (includes password field explicitly).
  * 2. If no user is found → throws a 404 error.
- * 3. Compares the provided password with the hashed password in the database.
+ * 3. Compares the provided password with the hashed password in the database using bcrypt.
  * 4. If credentials match → generates a JWT containing the user ID and email.
- * 5. Sends a 200 response with the generated token.
+ * 5. Returns a 200 response with the generated token.
+ * 6. If password doesn't match → throws a 401 error.
  *
  * Error Handling:
+ * - Throws a 404 error if the user is not found.
  * - Throws a 401 error if the password is incorrect.
- * - All other errors are caught and forwarded to the global error handler via `next(error)`.
+ * - All errors are caught and forwarded to the global error handler via `next(error)`.
  *
  * Notes:
- * - Uses bcrypt for password comparison.
- * - The generated token is typically used for protected routes requiring authentication.
- * - The token payload includes minimal user info for security (ID and email only).
+ * - Uses bcrypt.compareSync() for password verification.
+ * - The password field is excluded from User queries by default (select: false in schema),
+ *   so it must be explicitly included with .select("+password").
+ * - The generated token payload includes user ID and email for identification.
+ * - Token is used for protecting subsequent API requests requiring authentication.
  */
 
 const loginUser = async (req, res, next) => {
 	try {
-		const user = await User.findOne({ email: req.body.email }).select("+password");
+		const user = await User.findOne({ email: req.body.email }).select(
+			"+password",
+		);
 
 		if (!user) {
 			throw createError(404, "User not found");

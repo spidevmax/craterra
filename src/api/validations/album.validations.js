@@ -17,7 +17,9 @@ const createAlbumValidations = [
 		.withMessage("At least one artist is required")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((artist) => typeof artist === "string" && artist.trim().length > 0);
+				return value.every(
+					(artist) => typeof artist === "string" && artist.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -60,7 +62,9 @@ const createAlbumValidations = [
 		.withMessage("Labels must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((label) => typeof label === "string" && label.trim().length > 0);
+				return value.every(
+					(label) => typeof label === "string" && label.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -72,7 +76,9 @@ const createAlbumValidations = [
 		.withMessage("Genres must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((genre) => typeof genre === "string" && genre.trim().length > 0);
+				return value.every(
+					(genre) => typeof genre === "string" && genre.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -84,7 +90,9 @@ const createAlbumValidations = [
 		.withMessage("Tags must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((tag) => typeof tag === "string" && tag.trim().length > 0);
+				return value.every(
+					(tag) => typeof tag === "string" && tag.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -145,6 +153,67 @@ const createAlbumValidations = [
 		.withMessage(
 			"Invalid sonic dimension. Must be one of: lo-fi, polished, experimental, minimalist, layered, raw, atmospheric, abrasive, dense, spacious, organic, synthetic",
 		),
+
+	// Personal Note validations
+	body("personalNote.content")
+		.optional()
+		.isString()
+		.withMessage("Personal note content must be a string"),
+
+	// Connections validations
+	body("connections")
+		.optional()
+		.isArray()
+		.withMessage("Connections must be an array"),
+
+	body("connections.*.album")
+		.optional()
+		.isMongoId()
+		.withMessage("Connection album must be a valid MongoDB ID"),
+
+	body("connections.*.type")
+		.optional()
+		.isIn([
+			"influences",
+			"similar-to",
+			"contrasts-with",
+			"evokes",
+			"progression",
+			"thematic",
+			"discovered-through",
+			"samples",
+		])
+		.withMessage(
+			"Connection type must be one of: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples",
+		),
+
+	body("connections.*.note")
+		.optional()
+		.isString()
+		.withMessage("Connection note must be a string"),
+
+	// Listening Context validations
+	body("listeningContext.firstListen")
+		.optional()
+		.isISO8601()
+		.withMessage("First listen date must be a valid date"),
+
+	body("listeningContext.lastListen")
+		.optional()
+		.isISO8601()
+		.withMessage("Last listen date must be a valid date"),
+
+	body("listeningContext.frequency")
+		.optional()
+		.isIn(["once", "occasional", "regular", "obsessive"])
+		.withMessage(
+			"Frequency must be one of: once, occasional, regular, obsessive",
+		),
+
+	body("listeningContext.context")
+		.optional()
+		.isString()
+		.withMessage("Listening context must be a string"),
 ];
 
 /**
@@ -165,7 +234,9 @@ const updateAlbumValidations = [
 		.withMessage("Artists must be an array with at least one item")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((artist) => typeof artist === "string" && artist.trim().length > 0);
+				return value.every(
+					(artist) => typeof artist === "string" && artist.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -209,7 +280,9 @@ const updateAlbumValidations = [
 		.withMessage("Labels must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((label) => typeof label === "string" && label.trim().length > 0);
+				return value.every(
+					(label) => typeof label === "string" && label.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -221,7 +294,9 @@ const updateAlbumValidations = [
 		.withMessage("Genres must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((genre) => typeof genre === "string" && genre.trim().length > 0);
+				return value.every(
+					(genre) => typeof genre === "string" && genre.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -233,7 +308,9 @@ const updateAlbumValidations = [
 		.withMessage("Tags must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every((tag) => typeof tag === "string" && tag.trim().length > 0);
+				return value.every(
+					(tag) => typeof tag === "string" && tag.trim().length > 0,
+				);
 			}
 			return false;
 		})
@@ -294,6 +371,67 @@ const updateAlbumValidations = [
 		.withMessage(
 			"Invalid sonic dimension. Must be one of: lo-fi, polished, experimental, minimalist, layered, raw, atmospheric, abrasive, dense, spacious, organic, synthetic",
 		),
+
+	// Personal Note validations
+	body("personalNote.content")
+		.optional()
+		.isString()
+		.withMessage("Personal note content must be a string"),
+
+	// Connections validations
+	body("connections")
+		.optional()
+		.isArray()
+		.withMessage("Connections must be an array"),
+
+	body("connections.*.album")
+		.optional()
+		.isMongoId()
+		.withMessage("Connection album must be a valid MongoDB ID"),
+
+	body("connections.*.type")
+		.optional()
+		.isIn([
+			"influences",
+			"similar-to",
+			"contrasts-with",
+			"evokes",
+			"progression",
+			"thematic",
+			"discovered-through",
+			"samples",
+		])
+		.withMessage(
+			"Connection type must be one of: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples",
+		),
+
+	body("connections.*.note")
+		.optional()
+		.isString()
+		.withMessage("Connection note must be a string"),
+
+	// Listening Context validations
+	body("listeningContext.firstListen")
+		.optional()
+		.isISO8601()
+		.withMessage("First listen date must be a valid date"),
+
+	body("listeningContext.lastListen")
+		.optional()
+		.isISO8601()
+		.withMessage("Last listen date must be a valid date"),
+
+	body("listeningContext.frequency")
+		.optional()
+		.isIn(["once", "occasional", "regular", "obsessive"])
+		.withMessage(
+			"Frequency must be one of: once, occasional, regular, obsessive",
+		),
+
+	body("listeningContext.context")
+		.optional()
+		.isString()
+		.withMessage("Listening context must be a string"),
 ];
 
 module.exports = {

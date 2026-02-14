@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
 			required: true,
 			trim: true,
 			minlength: [8, "Password 8 characters minimum"],
-			select: false, // Excluye password por defecto en queries
+			select: false, // Exclude password from query results by default
 		},
 		role: { type: String, enum: ["user", "admin"], default: "user" },
 		profileImageUrl: { type: String, trim: true },
@@ -41,8 +41,6 @@ userSchema.pre("save", async function (next) {
 		next(error);
 	}
 });
-
-userSchema.index({ email: 1 });
 
 const User = mongoose.model("User", userSchema);
 
