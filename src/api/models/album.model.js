@@ -108,10 +108,15 @@ const albumSchema = new mongoose.Schema(
 	},
 );
 
+// Pre-save hook: Automatically executed before saving an album document
 albumSchema.pre("save", function (next) {
+	// Check if personal note content exists
 	if (this.personalNote.content) {
+		// Calculate word count by splitting content by whitespace
+		// and store the result in the wordCount field
 		this.personalNote.wordCount = this.personalNote.content.split(/\s+/).length;
 	}
+	// Continue with the save process
 	next();
 });
 

@@ -17,9 +17,7 @@ const createAlbumValidations = [
 		.withMessage("At least one artist is required")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(artist) => typeof artist === "string" && artist.trim().length > 0,
-				);
+				return value.every((artist) => typeof artist === "string" && artist.trim().length > 0);
 			}
 			return false;
 		})
@@ -62,9 +60,7 @@ const createAlbumValidations = [
 		.withMessage("Labels must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(label) => typeof label === "string" && label.trim().length > 0,
-				);
+				return value.every((label) => typeof label === "string" && label.trim().length > 0);
 			}
 			return false;
 		})
@@ -76,9 +72,7 @@ const createAlbumValidations = [
 		.withMessage("Genres must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(genre) => typeof genre === "string" && genre.trim().length > 0,
-				);
+				return value.every((genre) => typeof genre === "string" && genre.trim().length > 0);
 			}
 			return false;
 		})
@@ -90,9 +84,7 @@ const createAlbumValidations = [
 		.withMessage("Tags must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(tag) => typeof tag === "string" && tag.trim().length > 0,
-				);
+				return value.every((tag) => typeof tag === "string" && tag.trim().length > 0);
 			}
 			return false;
 		})
@@ -161,10 +153,7 @@ const createAlbumValidations = [
 		.withMessage("Personal note content must be a string"),
 
 	// Connections validations
-	body("connections")
-		.optional()
-		.isArray()
-		.withMessage("Connections must be an array"),
+	body("connections").optional().isArray().withMessage("Connections must be an array"),
 
 	body("connections.*.album")
 		.optional()
@@ -187,10 +176,7 @@ const createAlbumValidations = [
 			"Connection type must be one of: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples",
 		),
 
-	body("connections.*.note")
-		.optional()
-		.isString()
-		.withMessage("Connection note must be a string"),
+	body("connections.*.note").optional().isString().withMessage("Connection note must be a string"),
 
 	// Listening Context validations
 	body("listeningContext.firstListen")
@@ -206,9 +192,7 @@ const createAlbumValidations = [
 	body("listeningContext.frequency")
 		.optional()
 		.isIn(["once", "occasional", "regular", "obsessive"])
-		.withMessage(
-			"Frequency must be one of: once, occasional, regular, obsessive",
-		),
+		.withMessage("Frequency must be one of: once, occasional, regular, obsessive"),
 
 	body("listeningContext.context")
 		.optional()
@@ -234,9 +218,7 @@ const updateAlbumValidations = [
 		.withMessage("Artists must be an array with at least one item")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(artist) => typeof artist === "string" && artist.trim().length > 0,
-				);
+				return value.every((artist) => typeof artist === "string" && artist.trim().length > 0);
 			}
 			return false;
 		})
@@ -280,9 +262,7 @@ const updateAlbumValidations = [
 		.withMessage("Labels must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(label) => typeof label === "string" && label.trim().length > 0,
-				);
+				return value.every((label) => typeof label === "string" && label.trim().length > 0);
 			}
 			return false;
 		})
@@ -294,9 +274,7 @@ const updateAlbumValidations = [
 		.withMessage("Genres must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(genre) => typeof genre === "string" && genre.trim().length > 0,
-				);
+				return value.every((genre) => typeof genre === "string" && genre.trim().length > 0);
 			}
 			return false;
 		})
@@ -308,9 +286,7 @@ const updateAlbumValidations = [
 		.withMessage("Tags must be an array")
 		.custom((value) => {
 			if (Array.isArray(value)) {
-				return value.every(
-					(tag) => typeof tag === "string" && tag.trim().length > 0,
-				);
+				return value.every((tag) => typeof tag === "string" && tag.trim().length > 0);
 			}
 			return false;
 		})
@@ -379,10 +355,7 @@ const updateAlbumValidations = [
 		.withMessage("Personal note content must be a string"),
 
 	// Connections validations
-	body("connections")
-		.optional()
-		.isArray()
-		.withMessage("Connections must be an array"),
+	body("connections").optional().isArray().withMessage("Connections must be an array"),
 
 	body("connections.*.album")
 		.optional()
@@ -405,10 +378,7 @@ const updateAlbumValidations = [
 			"Connection type must be one of: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples",
 		),
 
-	body("connections.*.note")
-		.optional()
-		.isString()
-		.withMessage("Connection note must be a string"),
+	body("connections.*.note").optional().isString().withMessage("Connection note must be a string"),
 
 	// Listening Context validations
 	body("listeningContext.firstListen")
@@ -424,9 +394,7 @@ const updateAlbumValidations = [
 	body("listeningContext.frequency")
 		.optional()
 		.isIn(["once", "occasional", "regular", "obsessive"])
-		.withMessage(
-			"Frequency must be one of: once, occasional, regular, obsessive",
-		),
+		.withMessage("Frequency must be one of: once, occasional, regular, obsessive"),
 
 	body("listeningContext.context")
 		.optional()
@@ -434,7 +402,65 @@ const updateAlbumValidations = [
 		.withMessage("Listening context must be a string"),
 ];
 
+/**
+ * Validations for adding a connection between albums
+ */
+const addConnectionValidations = [
+	body("targetAlbumId")
+		.trim()
+		.notEmpty()
+		.withMessage("Target album ID is required")
+		.isMongoId()
+		.withMessage("Invalid target album ID"),
+
+	body("type")
+		.trim()
+		.notEmpty()
+		.withMessage("Connection type is required")
+		.isIn([
+			"influences",
+			"similar-to",
+			"contrasts-with",
+			"evokes",
+			"progression",
+			"thematic",
+			"discovered-through",
+			"samples",
+		])
+		.withMessage(
+			"Invalid connection type. Must be one of: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples",
+		),
+
+	body("note").optional().trim().isString().withMessage("Note must be a string"),
+];
+
+/**
+ * Validations for updating a connection
+ */
+const updateConnectionValidations = [
+	body("type")
+		.optional()
+		.trim()
+		.isIn([
+			"influences",
+			"similar-to",
+			"contrasts-with",
+			"evokes",
+			"progression",
+			"thematic",
+			"discovered-through",
+			"samples",
+		])
+		.withMessage(
+			"Invalid connection type. Must be one of: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples",
+		),
+
+	body("note").optional().trim().isString().withMessage("Note must be a string"),
+];
+
 module.exports = {
 	createAlbumValidations,
 	updateAlbumValidations,
+	addConnectionValidations,
+	updateConnectionValidations,
 };

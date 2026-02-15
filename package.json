@@ -6,9 +6,7 @@
 	"scripts": {
 		"start": "node index.js",
 		"dev": "nodemon index.js",
-		"seedDB": "node ./src/utils/seeds/seedDB.js",
-		"test": "jest",
-		"test:watch": "jest --watch"
+		"seedDB": "node ./src/utils/seeds/seedDB.js"
 	},
 	"repository": {
 		"type": "git",
@@ -36,8 +34,6 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.15",
-		"jest": "^30.2.0",
-		"nodemon": "^3.1.10",
-		"supertest": "^7.1.4"
+		"nodemon": "^3.1.10"
 	}
 }
