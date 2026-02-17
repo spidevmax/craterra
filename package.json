@@ -1,7 +1,7 @@
 {
 	"name": "craterra",
 	"version": "1.0.0",
-	"description": "RESTful API for managing music albums and user accounts",
+	"description": "Personal knowledge management (PKM) API for music curation and discovery.",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
@@ -12,8 +12,20 @@
 		"type": "git",
 		"url": "git+https://github.com/spidevmax/craterra.git"
 	},
-	"keywords": [],
-	"author": "",
+	"keywords": [
+		"api",
+		"music",
+		"curation",
+		"discovery",
+		"personal knowledge management",
+		"PKM",
+		"digital garden"
+	],
+	"author": {
+		"name": "Max Primavera",
+		"email": "spidevmax@proton.me",
+		"url": "https://spidevmax.vercel.app/"
+	},
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/spidevmax/craterra/issues"

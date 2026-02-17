@@ -20,20 +20,12 @@ const mongoose = require("mongoose");
  *
  * Environment Variables Required:
  * - DB_URL: MongoDB connection string
- *   Example: "mongodb+srv://username:password@cluster.mongodb.net/database"
- *   Or: "mongodb://localhost:27017/craterra"
  *
  * MongoDB Connection States:
  * - 0: Disconnected
  * - 1: Connected (default)
  * - 2: Connecting
  * - 3: Disconnecting
- *
- * Notes:
- * - This function is async but doesn't require await (fire-and-forget)
- * - Once connected, Mongoose handles reconnection automatically
- * - Connection is shared across all modules in the application
- * - Models should be defined after or alongside this connection
  *
  * @returns {Promise<void>} Connection promise (can be awaited but not required)
  *
