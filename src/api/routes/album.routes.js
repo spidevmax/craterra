@@ -9,7 +9,10 @@ const {
 	updateConnection,
 	deleteConnection,
 } = require("../controllers/album.controller");
+const { importAlbums } = require("../controllers/import.controller");
+const { exportAlbums } = require("../controllers/export.controller");
 const { uploadAlbumCover } = require("../../middlewares/upload/album.upload");
+const { uploadCSV } = require("../../middlewares/upload/csv.upload");
 const { isAuth, isOwner } = require("../../middlewares/auth.middleware");
 const { handleValidationErrors } = require("../../middlewares/validation.middleware");
 const {
@@ -342,6 +345,110 @@ albumsRouter.delete("/:id", isOwner, deleteAlbum); // → DELETE /api/v1/albums/
  *         description: Server error
  */
 albumsRouter.get("/graph/all", getAlbumGraph); // → GET /api/v1/albums/graph/all
+
+/**
+ * @swagger
+ * /api/v1/albums/import:
+ *   post:
+ *     summary: Import albums from Notion CSV
+ *     description: |
+ *       Bulk import albums from a Notion database CSV export.
+ *       Expected columns: Name, Artist, Release Date, Format, Label, Main Genre,
+ *       Subgenre, Scene, Movements, Release Country, Cover, URL, Rating, Release Status, Favourite.
+ *       Returns a summary of imported, skipped, and errored rows.
+ *     tags:
+ *       - Albums
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: CSV file exported from Notion
+ *             required:
+ *               - file
+ *     responses:
+ *       201:
+ *         description: Import complete
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                   example: "Import complete: 42 imported, 3 skipped, 0 errors"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     imported:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                           title:
+ *                             type: string
+ *                     skipped:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           row:
+ *                             type: number
+ *                           title:
+ *                             type: string
+ *                           reason:
+ *                             type: string
+ *                     errors:
+ *                       type: array
+ *       400:
+ *         description: No file provided or invalid CSV
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+albumsRouter.post("/import", uploadCSV.single("file"), importAlbums); // → POST /api/v1/albums/import
+
+/**
+ * @swagger
+ * /api/v1/albums/export:
+ *   get:
+ *     summary: Export albums to CSV
+ *     description: |
+ *       Downloads all albums of the authenticated user as a CSV file.
+ *       Column names match the Notion import format, so the file can be
+ *       re-imported into Notion or this app without modification.
+ *       Columns: Name, Artist, Release Date, Format, Label, Main Genre,
+ *       Tags, Release Country, Cover, URL, Rating, Favourite, Personal Note.
+ *     tags:
+ *       - Albums
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: CSV file download
+ *         content:
+ *           text/csv:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Server error
+ */
+albumsRouter.get("/export", exportAlbums); // → GET /api/v1/albums/export
 
 /**
  * @swagger
