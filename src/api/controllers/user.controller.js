@@ -7,22 +7,16 @@ const { createError } = require("../../utils/createError");
 /**
  * Controller: getMyProfile
  * ------------------------
- * Retrieves the authenticated user's profile (excluding the password).
+ * Returns the authenticated user's profile without the password field.
  *
  * Workflow:
- * 1. Uses `req.user._id` (set by isAuth) to find the current user in the database.
- * 2. Excludes the password field using `.select("-password")`.
- * 3. Sends a 200 response with the user’s profile data.
+ * 1. Uses req.user._id (set by isAuth) to query the database.
+ * 2. Explicitly excludes the password field with .select("-password").
+ * 3. Returns 200 with the user document.
  *
  * Error Handling:
- * - Throws 404 if the user cannot be found.
- * - Any other errors are forwarded to the global error handler.
- *
- * Notes:
- * - Requires `isAuth` middleware to ensure `req.user` is available.
- * - Ideal for displaying personal information on a “My Profile” page.
+ * - 404 if the user no longer exists in the database.
  */
-
 const getMyProfile = async (req, res, next) => {
 	try {
 		const user = await User.findById(req.user._id).select("-password");
@@ -39,28 +33,21 @@ const getMyProfile = async (req, res, next) => {
 /**
  * Controller: updateMyProfile
  * ---------------------------
- * Allows the authenticated user to update their own profile information.
+ * Updates the authenticated user's name, email, or profile image.
+ * Role and password changes are explicitly blocked here.
  *
  * Workflow:
- * 1. Finds the user using `req.user._id`.
- * 2. Prevents changes to restricted fields:
- *    - Cannot change `role` (throws 403).
- *    - Cannot change `password` here (must use `/users/change-password`).
- * 3. Updates allowed fields: `name`, `email`, and optionally the profile image.
- * 4. If a new image is uploaded, deletes the old one from Cloudinary.
- * 5. Saves and returns the updated user (excluding password).
+ * 1. Finds the user by req.user._id.
+ * 2. Rejects the request if req.body contains "role" (→ 403).
+ * 3. Rejects the request if req.body contains "password" (→ 403, use /change-password instead).
+ * 4. Updates name and/or email if provided.
+ * 5. If a new profile image is uploaded, deletes the old Cloudinary image and stores the new one.
+ * 6. Saves the document and returns the updated user without the password field.
  *
  * Error Handling:
- * - Throws 403 if the user tries to change restricted fields.
- * - Throws 404 if the user does not exist.
- * - Uses `next(error)` to pass errors to the global handler.
- *
- * Notes:
- * - Requires `isAuth` middleware.
- * - Uses `multer` with Cloudinary for image upload management.
- * - Returns sanitized user data without password.
+ * - 403 if the request attempts to change role or password.
+ * - 404 if the user does not exist.
  */
-
 const updateMyProfile = async (req, res, next) => {
 	try {
 		const user = await User.findById(req.user._id);
@@ -68,13 +55,12 @@ const updateMyProfile = async (req, res, next) => {
 			throw createError(404, "User not found");
 		}
 
-		// An user with the role "user" cannot change any role
+		// Role changes are not allowed via this route (only admins can change roles)
 		if (req.body.role) {
-			//      delete req.body.role;
 			throw createError(403, "You are not allowed to change your role");
 		}
 
-		// The user cannot change their password in this route
+		// Password changes must go through /users/change-password
 		if (req.body.password) {
 			throw createError(
 				403,
@@ -90,7 +76,7 @@ const updateMyProfile = async (req, res, next) => {
 			user.email = req.body.email.toLowerCase().trim();
 		}
 
-		// If there is a new image, replace the previous one
+		// If a new image is uploaded, replace the previous one in Cloudinary
 		if (req.file) {
 			if (user.profileImageId) {
 				await deleteImgCloudinary(user.profileImageId);
@@ -101,17 +87,11 @@ const updateMyProfile = async (req, res, next) => {
 
 		const updatedUser = await user.save();
 
-		// Delete password before updating
-		const userReponse = updatedUser.toObject();
-		delete userReponse.password;
+		// Strip password from the response object before sending
+		const userResponse = updatedUser.toObject();
+		delete userResponse.password;
 
-		return sendResponse(
-			res,
-			200,
-			true,
-			"Profile updated successfully",
-			userReponse,
-		);
+		return sendResponse(res, 200, true, "Profile updated successfully", userResponse);
 	} catch (error) {
 		next(error);
 	}
@@ -120,27 +100,24 @@ const updateMyProfile = async (req, res, next) => {
 /**
  * Controller: changeMyPassword
  * ----------------------------
- * Allows the authenticated user to securely change their password.
+ * Lets the authenticated user change their password securely.
  *
  * Workflow:
- * 1. Extracts `currentPassword`, `newPassword`, and `confirmPassword` from the request body.
- * 2. Validates that all fields are provided and that the new passwords match.
- * 3. Compares the provided current password with the stored (hashed) password.
- * 4. Validates password length (minimum 8 characters).
- * 5. If valid, assigns the new password — triggering the bcrypt pre-save hook.
- * 6. Returns a 200 response on success.
+ * 1. Destructures currentPassword, newPassword, and confirmPassword from req.body.
+ * 2. Validates that all three fields are present.
+ * 3. Validates that newPassword and confirmPassword match.
+ * 4. Fetches the user with .select("+password") — required because the password
+ *    field has select: false in the schema and is excluded by default.
+ * 5. Compares currentPassword with the stored hash using bcrypt.
+ * 6. Validates that the new password is at least 8 characters.
+ * 7. Assigns the plain-text new password; the pre-save hook hashes it automatically.
+ * 8. Returns 200 on success.
  *
  * Error Handling:
- * - 400 if fields are missing or new passwords don’t match.
- * - 401 if current password is incorrect.
- * - 404 if the user is not found.
- *
- * Notes:
- * - The password hashing occurs automatically via the `pre("save")` hook in the User model.
- * - `isAuth` middleware is required to access this route.
- * - Does not return the user object, only a success message for security reasons.
+ * - 400 if any field is missing, passwords do not match, or new password is too short.
+ * - 401 if currentPassword is incorrect.
+ * - 404 if the user does not exist.
  */
-
 const changeMyPassword = async (req, res, next) => {
 	try {
 		const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -153,7 +130,8 @@ const changeMyPassword = async (req, res, next) => {
 			throw createError(400, "New passwords do not match");
 		}
 
-		const user = await User.findById(req.user._id);
+		// Must explicitly select "+password" because the field is excluded by default
+		const user = await User.findById(req.user._id).select("+password");
 		if (!user) {
 			throw createError(404, "User not found");
 		}
@@ -167,16 +145,11 @@ const changeMyPassword = async (req, res, next) => {
 			throw createError(400, "Password must be at least 8 characters long");
 		}
 
+		// Assigning a plain-text value triggers the pre-save bcrypt hook
 		user.password = newPassword;
 		await user.save();
 
-		return sendResponse(
-			res,
-			200,
-			true,
-			"Password changed successfully",
-			user.password,
-		);
+		return sendResponse(res, 200, true, "Password changed successfully");
 	} catch (error) {
 		next(error);
 	}
@@ -185,34 +158,28 @@ const changeMyPassword = async (req, res, next) => {
 /**
  * Controller: deleteMyAccount
  * ---------------------------
- * Permanently deletes the authenticated user’s account and their Cloudinary image.
+ * Permanently deletes the authenticated user's account and their Cloudinary profile image.
  *
  * Workflow:
- * 1. Finds the user by `req.user._id`.
- * 2. If found, deletes the associated Cloudinary profile image (if exists).
- * 3. Deletes the user record from the database.
- * 4. Returns a 200 response confirming deletion.
+ * 1. Finds the user by req.user._id.
+ * 2. Deletes the profile image from Cloudinary if one exists.
+ * 3. Deletes the user document from the database.
+ * 4. Returns 200 with the deleted user document.
  *
  * Error Handling:
- * - Throws 404 if the user does not exist.
- * - Any other errors are passed to the global error handler via `next(error)`.
+ * - 404 if the user does not exist.
  *
  * Notes:
- * - Requires `isAuth` middleware (user must be logged in).
- * - Does not cascade delete related data (albums, etc.) — handle that separately if needed.
- * - Consider soft-deletion if audit logs are required.
+ * - Does not cascade-delete the user's albums — those remain in the database.
  */
-
 const deleteMyAccount = async (req, res, next) => {
 	try {
-		// Search for the authenticated user
 		const user = await User.findById(req.user._id);
 
 		if (!user) {
 			throw createError(404, "User not found");
 		}
 
-		//Delete the profile picture
 		if (user.profileImageId) {
 			await deleteImgCloudinary(user.profileImageId);
 		}

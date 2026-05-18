@@ -14,7 +14,7 @@ const authRouter = require("express").Router();
  * /api/v1/auth/register:
  *   post:
  *     summary: Register a new user
- *     description: Create a new user account with profile image
+ *     description: Creates a new user account. New users are always assigned the role "user". Optionally accepts a profile image uploaded via multipart/form-data.
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -23,9 +23,15 @@ const authRouter = require("express").Router();
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
  *             properties:
  *               name:
  *                 type: string
+ *                 minLength: 2
+ *                 maxLength: 100
  *                 example: John Doe
  *               email:
  *                 type: string
@@ -33,18 +39,12 @@ const authRouter = require("express").Router();
  *                 example: john@example.com
  *               password:
  *                 type: string
+ *                 minLength: 8
  *                 example: SecurePassword123!
- *               role:
- *                 type: string
- *                 enum: [user, admin]
- *                 example: user
  *               profileImage:
  *                 type: string
  *                 format: binary
- *             required:
- *               - name
- *               - email
- *               - password
+ *                 description: Optional profile picture (jpg, png, jpeg, gif, webp)
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -53,7 +53,7 @@ const authRouter = require("express").Router();
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
  *                   example: true
  *                 message:
@@ -62,7 +62,11 @@ const authRouter = require("express").Router();
  *                 data:
  *                   $ref: '#/components/schemas/User'
  *       400:
- *         description: Validation error
+ *         description: Validation error or email already in use
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */
@@ -78,8 +82,8 @@ authRouter.post(
  * @swagger
  * /api/v1/auth/login:
  *   post:
- *     summary: Login user
- *     description: Authenticate user and return JWT token
+ *     summary: Login
+ *     description: Authenticates the user and returns a JWT token to use in subsequent requests.
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -88,6 +92,9 @@ authRouter.post(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
@@ -96,33 +103,36 @@ authRouter.post(
  *               password:
  *                 type: string
  *                 example: SecurePassword123!
- *             required:
- *               - email
- *               - password
  *     responses:
  *       200:
- *         description: Login successful
+ *         description: Login successful — returns the JWT token as a string
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Login successful
+ *                   example: Token created successfully
  *                 data:
- *                   type: object
- *                   properties:
- *                     user:
- *                       $ref: '#/components/schemas/User'
- *                     token:
- *                       type: string
- *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                   type: string
+ *                   description: JWT token
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       401:
- *         description: Invalid credentials
+ *         description: Invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       400:
  *         description: Validation error
  *       500:

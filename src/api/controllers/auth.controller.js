@@ -35,8 +35,11 @@ const registerUser = async (req, res, next) => {
 	let imageUploaded = false;
 
 	try {
+		const { email } = req.body;
+
 		// Check if the email already exists BEFORE processing
-		const userExist = await User.findOne({ email: req.body.email });
+		const userExist = await User.findOne({ email });
+
 		if (userExist) {
 			// Delete the uploaded image since user already exists
 			if (req.file?.filename) {
@@ -56,7 +59,10 @@ const registerUser = async (req, res, next) => {
 
 		const userDB = await user.save();
 
-		return sendResponse(res, 201, true, "User registered successfully", userDB);
+		const userResponse = userDB.toObject();
+		delete userResponse.password;
+
+		return sendResponse(res, 201, true, "User registered successfully", userResponse);
 	} catch (error) {
 		// Clean up image only if it was successfully assigned to user but save failed
 		if (imageUploaded && error.status !== 400) {
@@ -94,20 +100,16 @@ const registerUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
 	try {
-		const user = await User.findOne({ email: req.body.email }).select(
-			"+password",
-		);
+		const user = await User.findOne({ email: req.body.email }).select("+password");
 
-		if (!user) {
-			throw createError(404, "User not found");
-		}
+		const isMatch = user ? await bcrypt.compare(req.body.password, user.password) : false;
 
-		if (bcrypt.compareSync(req.body.password, user.password)) {
-			const token = generateToken(user._id, user.email);
-			return sendResponse(res, 200, true, "Token created successfully", token);
-		} else {
+		if (!user || !isMatch) {
 			throw createError(401, "Invalid credentials");
 		}
+
+		const token = generateToken(user._id, user.email);
+		return sendResponse(res, 200, true, "Token created successfully", token);
 	} catch (error) {
 		next(error);
 	}

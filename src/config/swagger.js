@@ -267,7 +267,7 @@ const options = {
 				Error: {
 					type: "object",
 					properties: {
-						status: {
+						success: {
 							type: "boolean",
 							example: false,
 						},
@@ -275,16 +275,12 @@ const options = {
 							type: "string",
 							example: "Error message",
 						},
-						data: {
-							type: "object",
-							nullable: true,
-						},
 					},
 				},
 				Success: {
 					type: "object",
 					properties: {
-						status: {
+						success: {
 							type: "boolean",
 							example: true,
 						},

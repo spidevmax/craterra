@@ -8,13 +8,15 @@ const { createError } = require("../../utils/createError");
  * -----------------------
  * Retrieves all albums created by the currently authenticated user.
  *
- * Behavior:
- * 1. Queries Album collection filtering by addedBy: req.user._id
- * 2. Returns 200 with an array of albums.
+ * Workflow:
+ * 1. Queries the Album collection filtering by addedBy: req.user._id.
+ * 2. Populates addedBy (name, email) and connections.album (title, artists, releaseDate, coverArtUrl).
+ * 3. Sorts results by createdAt descending (newest first).
+ * 4. Returns 200 with an empty array and a specific message if the user has no albums.
+ * 5. Returns 200 with the album array otherwise.
  *
  * Notes:
- * - No need for populate unless you want to include additional user details.
- * - Only returns albums of the logged-in user, never others.
+ * - Only returns albums belonging to the logged-in user, never other users' albums.
  */
 
 const getMyAlbums = async (req, res, next) => {
@@ -74,14 +76,18 @@ const getAlbumById = async (req, res, next) => {
  * - other optional fields: format, releaseDate, labels, genres, tags, dimensions
  *
  * Behavior:
- * 1. Checks if an album with the same title and artists already exists for this user → 400 error.
- * 2. If a file (cover image) is uploaded, saves the Cloudinary URL and public ID.
- * 3. Saves the new album to the database.
- * 4. Returns 201 with the saved album data.
+ * 1. Trims whitespace from title and each artist string.
+ * 2. Checks for an existing album with the same title (case-insensitive regex) and exact artist
+ *    list for this user → throws 400 if a duplicate is found.
+ * 3. Creates a new Album document from req.body, setting addedBy to req.user._id.
+ * 4. If a cover image was uploaded (req.file), attaches the Cloudinary URL and public ID.
+ * 5. Saves the document and returns 201 with the saved album.
  *
  * Notes:
- * - Uses req.user._id as addedBy (owner) to ensure the album belongs to the logged-in user.
- * - If Cloudinary upload fails or album save fails, deletes the uploaded image to avoid orphaned files.
+ * - The duplicate check uses `$regex` with the "i" flag so "OK Computer" and "ok computer"
+ *   are treated as the same album.
+ * - If the save throws (e.g. validation error), any uploaded Cloudinary image is deleted in
+ *   the catch block to prevent orphaned files.
  */
 
 const postAlbum = async (req, res, next) => {
@@ -89,14 +95,13 @@ const postAlbum = async (req, res, next) => {
 		const { title, artists = [] } = req.body;
 		const addedBy = req.user._id;
 
-		// Normalize text only for duplicate checking
-		const normalizedTitle = title.trim().toLowerCase();
-		const normalizedArtists = artists.map((a) => a.trim().toLowerCase());
+		const trimmedTitle = title.trim();
+		const trimmedArtists = artists.map((a) => a.trim());
 
-		// Check if album already exists for this user
+		// Check if album already exists for this user (case-insensitive title)
 		const albumExist = await Album.findOne({
-			title: normalizedTitle,
-			artists: { $all: normalizedArtists, $size: normalizedArtists.length },
+			title: { $regex: new RegExp(`^${trimmedTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, "i") },
+			artists: { $all: trimmedArtists, $size: trimmedArtists.length },
 			addedBy,
 		});
 
@@ -107,8 +112,6 @@ const postAlbum = async (req, res, next) => {
 		// Create album
 		const newAlbum = new Album({
 			...req.body,
-			titleNormalized: normalizedTitle,
-			artistsNormalized: normalizedArtists,
 			addedBy,
 		});
 
@@ -339,11 +342,20 @@ const addConnection = async (req, res, next) => {
 /**
  * Controller: updateConnection
  * ----------------------------
- * Updates an existing connection between two albums.
+ * Updates the type and/or note of an existing connection on an album.
  *
- * Expected input (req.body):
- * - type: new connection type
- * - note: new note
+ * Expected input:
+ * - req.params.id          — source album ID
+ * - req.params.connectionId — subdocument ID of the connection to update
+ * - req.body.type          — new connection type (optional)
+ * - req.body.note          — new note (optional; pass empty string to clear)
+ *
+ * Workflow:
+ * 1. Finds the album by ID, verifying it belongs to req.user._id → 404 if not found.
+ * 2. Locates the connection subdocument via album.connections.id(connectionId) → 404 if missing.
+ * 3. Applies type and/or note changes only when the fields are present in the request.
+ * 4. Saves the parent album document and populates connection references.
+ * 5. Returns 200 with the updated album.
  */
 const updateConnection = async (req, res, next) => {
 	try {
@@ -380,8 +392,18 @@ const updateConnection = async (req, res, next) => {
 
 /**
  * Controller: deleteConnection
- * ---------------------------
- * Removes a connection between two albums.
+ * ----------------------------
+ * Removes a connection subdocument from an album.
+ *
+ * Expected input:
+ * - req.params.id           — source album ID
+ * - req.params.connectionId — subdocument ID of the connection to remove
+ *
+ * Workflow:
+ * 1. Finds the album by ID, verifying it belongs to req.user._id → 404 if not found.
+ * 2. Calls deleteOne() on the connection subdocument identified by connectionId.
+ * 3. Saves the parent album document and populates connection references.
+ * 4. Returns 200 with the updated album (connection list no longer includes the removed entry).
  */
 const deleteConnection = async (req, res, next) => {
 	try {

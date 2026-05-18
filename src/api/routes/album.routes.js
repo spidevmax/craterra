@@ -30,8 +30,8 @@ albumsRouter.use(isAuth([]));
  * @swagger
  * /api/v1/albums:
  *   get:
- *     summary: Get user's albums
- *     description: Retrieve all albums created by the authenticated user
+ *     summary: Get my albums
+ *     description: Returns all albums created by the authenticated user, sorted by most recently added.
  *     tags:
  *       - Albums
  *     security:
@@ -44,17 +44,22 @@ albumsRouter.use(isAuth([]));
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
  *                   example: true
  *                 message:
  *                   type: string
+ *                   example: Albums fetched successfully
  *                 data:
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Album'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */
@@ -62,10 +67,92 @@ albumsRouter.get("/", getMyAlbums); // → GET /api/v1/albums
 
 /**
  * @swagger
+ * /api/v1/albums/graph/all:
+ *   get:
+ *     summary: Get album graph
+ *     description: Returns all the user's albums formatted as a graph (nodes + edges) for Obsidian-like visualisation.
+ *     tags:
+ *       - Albums
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Graph data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Album graph fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     nodes:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: 507f1f77bcf86cd799439011
+ *                           label:
+ *                             type: string
+ *                             example: OK Computer
+ *                           artists:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                             example: ["Radiohead"]
+ *                           format:
+ *                             type: string
+ *                             example: LP
+ *                           coverArtUrl:
+ *                             type: string
+ *                             example: https://res.cloudinary.com/...
+ *                           releaseDate:
+ *                             type: string
+ *                             format: date
+ *                             example: 1997-05-21
+ *                     edges:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           source:
+ *                             type: string
+ *                             example: 507f1f77bcf86cd799439011
+ *                           target:
+ *                             type: string
+ *                             example: 507f1f77bcf86cd799439012
+ *                           type:
+ *                             type: string
+ *                             enum: [influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples]
+ *                             example: influences
+ *                           note:
+ *                             type: string
+ *                             example: Similar production approach
+ *       401:
+ *         description: No token or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ */
+albumsRouter.get("/graph/all", getAlbumGraph); // → GET /api/v1/albums/graph/all
+
+/**
+ * @swagger
  * /api/v1/albums:
  *   post:
  *     summary: Create album
- *     description: Create a new album with cover art
+ *     description: Creates a new album for the authenticated user. Duplicate detection is case-insensitive on title + artists combination.
  *     tags:
  *       - Albums
  *     security:
@@ -76,6 +163,11 @@ albumsRouter.get("/", getMyAlbums); // → GET /api/v1/albums
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - artists
+ *               - format
+ *               - releaseDate
  *             properties:
  *               title:
  *                 type: string
@@ -87,7 +179,7 @@ albumsRouter.get("/", getMyAlbums); // → GET /api/v1/albums
  *                 example: ["Radiohead"]
  *               format:
  *                 type: string
- *                 enum: ["LP", "EP", "Reissue", "Live", "Compilation", "Box Set", "Holiday", "Instrumental", "Remix", "Soundtrack", "Mixtape"]
+ *                 enum: [LP, EP, Reissue, Live, Compilation, Box Set, Holiday, Instrumental, Remix, Soundtrack, Mixtape]
  *                 example: LP
  *               releaseDate:
  *                 type: string
@@ -103,14 +195,15 @@ albumsRouter.get("/", getMyAlbums); // → GET /api/v1/albums
  *                 items:
  *                   type: string
  *                 example: ["Alternative Rock"]
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["90s", "brit-rock"]
  *               coverArt:
  *                 type: string
  *                 format: binary
- *             required:
- *               - title
- *               - artists
- *               - format
- *               - releaseDate
+ *                 description: Album cover image (jpg, png, jpeg, gif, webp)
  *     responses:
  *       201:
  *         description: Album created successfully
@@ -119,17 +212,22 @@ albumsRouter.get("/", getMyAlbums); // → GET /api/v1/albums
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
  *                   example: true
  *                 message:
  *                   type: string
+ *                   example: Album created successfully
  *                 data:
  *                   $ref: '#/components/schemas/Album'
  *       400:
- *         description: Validation error
+ *         description: Validation error or album already exists in collection
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
  *       500:
  *         description: Server error
  */
@@ -146,7 +244,7 @@ albumsRouter.post(
  * /api/v1/albums/{id}:
  *   get:
  *     summary: Get album by ID
- *     description: Retrieve a specific album if owned by the authenticated user
+ *     description: Returns a single album. Only accessible by its owner.
  *     tags:
  *       - Albums
  *     security:
@@ -158,6 +256,7 @@ albumsRouter.post(
  *         schema:
  *           type: string
  *         description: Album ID
+ *         example: 507f1f77bcf86cd799439011
  *     responses:
  *       200:
  *         description: Album retrieved successfully
@@ -166,18 +265,28 @@ albumsRouter.post(
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
+ *                   example: true
  *                 message:
  *                   type: string
+ *                   example: Album fetched successfully
  *                 data:
  *                   $ref: '#/components/schemas/Album'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
  *       403:
- *         description: Forbidden - not album owner
+ *         description: Not the album owner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Album not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */
@@ -188,7 +297,7 @@ albumsRouter.get("/:id", isOwner, getAlbumById); // → GET /api/v1/albums/:id
  * /api/v1/albums/{id}:
  *   put:
  *     summary: Update album
- *     description: Update album details (title, artist, releaseDate, coverArt)
+ *     description: Updates an album's metadata or cover art. Only the owner can edit.
  *     tags:
  *       - Albums
  *     security:
@@ -200,8 +309,8 @@ albumsRouter.get("/:id", isOwner, getAlbumById); // → GET /api/v1/albums/:id
  *         schema:
  *           type: string
  *         description: Album ID
+ *         example: 507f1f77bcf86cd799439011
  *     requestBody:
- *       required: true
  *       content:
  *         multipart/form-data:
  *           schema:
@@ -209,7 +318,7 @@ albumsRouter.get("/:id", isOwner, getAlbumById); // → GET /api/v1/albums/:id
  *             properties:
  *               title:
  *                 type: string
- *                 example: OK Computer (Remastered)
+ *                 example: OK Computer OKNOTOK
  *               artists:
  *                 type: array
  *                 items:
@@ -217,25 +326,28 @@ albumsRouter.get("/:id", isOwner, getAlbumById); // → GET /api/v1/albums/:id
  *                 example: ["Radiohead"]
  *               format:
  *                 type: string
- *                 enum: ["LP", "EP", "Reissue", "Live", "Compilation", "Box Set", "Holiday", "Instrumental", "Remix", "Soundtrack", "Mixtape"]
+ *                 enum: [LP, EP, Reissue, Live, Compilation, Box Set, Holiday, Instrumental, Remix, Soundtrack, Mixtape]
  *                 example: Reissue
  *               releaseDate:
  *                 type: string
  *                 format: date
- *                 example: 1997-05-21
+ *                 example: 2017-06-23
  *               labels:
  *                 type: array
  *                 items:
  *                   type: string
- *                 example: ["Parlophone"]
  *               genres:
  *                 type: array
  *                 items:
  *                   type: string
- *                 example: ["Alternative Rock", "Art Rock"]
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *               coverArt:
  *                 type: string
  *                 format: binary
+ *                 description: New cover image — previous one is deleted from Cloudinary
  *     responses:
  *       200:
  *         description: Album updated successfully
@@ -244,18 +356,28 @@ albumsRouter.get("/:id", isOwner, getAlbumById); // → GET /api/v1/albums/:id
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
+ *                   example: true
  *                 message:
  *                   type: string
+ *                   example: Album updated successfully
  *                 data:
  *                   $ref: '#/components/schemas/Album'
  *       400:
  *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
  *       403:
- *         description: Forbidden - not album owner
+ *         description: Not the album owner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Album not found
  *       500:
@@ -275,7 +397,7 @@ albumsRouter.put(
  * /api/v1/albums/{id}:
  *   delete:
  *     summary: Delete album
- *     description: Delete an album (only by owner)
+ *     description: Permanently deletes an album and its cover image from Cloudinary. Only the owner can delete.
  *     tags:
  *       - Albums
  *     security:
@@ -287,6 +409,7 @@ albumsRouter.put(
  *         schema:
  *           type: string
  *         description: Album ID
+ *         example: 507f1f77bcf86cd799439011
  *     responses:
  *       200:
  *         description: Album deleted successfully
@@ -295,56 +418,28 @@ albumsRouter.put(
  *             schema:
  *               type: object
  *               properties:
- *                 status:
+ *                 success:
  *                   type: boolean
+ *                   example: true
  *                 message:
  *                   type: string
+ *                   example: Album deleted successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Album'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
  *       403:
- *         description: Forbidden - not album owner
+ *         description: Not the album owner
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Album not found
  *       500:
  *         description: Server error
  */
 albumsRouter.delete("/:id", isOwner, deleteAlbum); // → DELETE /api/v1/albums/:id
-
-/**
- * @swagger
- * /api/v1/albums/graph/all:
- *   get:
- *     summary: Get album graph
- *     description: Retrieve complete album graph for visualization (Obsidian-like)
- *     tags:
- *       - Albums
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Graph retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                 message:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     nodes:
- *                       type: array
- *                     edges:
- *                       type: array
- *       401:
- *         description: Unauthorized
- *       500:
- *         description: Server error
- */
-albumsRouter.get("/graph/all", getAlbumGraph); // → GET /api/v1/albums/graph/all
 
 /**
  * @swagger
@@ -455,7 +550,7 @@ albumsRouter.get("/export", exportAlbums); // → GET /api/v1/albums/export
  * /api/v1/albums/{id}/connections:
  *   post:
  *     summary: Add connection
- *     description: Create a connection between two albums
+ *     description: Creates a directional connection from one album to another. The same album pair + type combination cannot be duplicated.
  *     tags:
  *       - Albums
  *     security:
@@ -467,35 +562,59 @@ albumsRouter.get("/export", exportAlbums); // → GET /api/v1/albums/export
  *         schema:
  *           type: string
  *         description: Source album ID
+ *         example: 507f1f77bcf86cd799439011
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
- *               targetAlbumId:
- *                 type: string
- *                 example: 507f1f77bcf86cd799439011
- *               type:
- *                 type: string
- *                 enum: ["influences", "similar-to", "contrasts-with", "evokes", "progression", "thematic", "discovered-through", "samples"]
- *                 example: influences
- *               note:
- *                 type: string
- *                 example: Great influence on my music taste
  *             required:
  *               - targetAlbumId
  *               - type
+ *             properties:
+ *               targetAlbumId:
+ *                 type: string
+ *                 example: 507f1f77bcf86cd799439012
+ *               type:
+ *                 type: string
+ *                 enum: [influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples]
+ *                 example: influences
+ *               note:
+ *                 type: string
+ *                 example: Shared production aesthetic
  *     responses:
  *       201:
  *         description: Connection added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Connection added successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Album'
  *       400:
- *         description: Connection already exists
+ *         description: Duplicate connection
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
+ *       403:
+ *         description: Not the album owner
  *       404:
- *         description: Album not found
+ *         description: Source or target album not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */
@@ -512,7 +631,7 @@ albumsRouter.post(
  * /api/v1/albums/{id}/connections/{connectionId}:
  *   put:
  *     summary: Update connection
- *     description: Update connection details (type or note)
+ *     description: Updates the type or note of an existing connection between two albums.
  *     tags:
  *       - Albums
  *     security:
@@ -523,11 +642,15 @@ albumsRouter.post(
  *         required: true
  *         schema:
  *           type: string
+ *         description: Source album ID
+ *         example: 507f1f77bcf86cd799439011
  *       - in: path
  *         name: connectionId
  *         required: true
  *         schema:
  *           type: string
+ *         description: Connection subdocument ID
+ *         example: 507f1f77bcf86cd799439099
  *     requestBody:
  *       required: true
  *       content:
@@ -537,17 +660,37 @@ albumsRouter.post(
  *             properties:
  *               type:
  *                 type: string
+ *                 enum: [influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples]
+ *                 example: similar-to
  *               note:
  *                 type: string
+ *                 example: Updated note
  *     responses:
  *       200:
  *         description: Connection updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Connection updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Album'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
  *       403:
- *         description: Forbidden
+ *         description: Not the album owner
  *       404:
  *         description: Album or connection not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */
@@ -564,7 +707,7 @@ albumsRouter.put(
  * /api/v1/albums/{id}/connections/{connectionId}:
  *   delete:
  *     summary: Delete connection
- *     description: Remove a connection between two albums
+ *     description: Removes a connection between two albums.
  *     tags:
  *       - Albums
  *     security:
@@ -575,20 +718,41 @@ albumsRouter.put(
  *         required: true
  *         schema:
  *           type: string
+ *         description: Source album ID
+ *         example: 507f1f77bcf86cd799439011
  *       - in: path
  *         name: connectionId
  *         required: true
  *         schema:
  *           type: string
+ *         description: Connection subdocument ID
+ *         example: 507f1f77bcf86cd799439099
  *     responses:
  *       200:
  *         description: Connection deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Connection deleted successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/Album'
  *       401:
- *         description: Unauthorized
+ *         description: No token or invalid token
  *       403:
- *         description: Forbidden
+ *         description: Not the album owner
  *       404:
  *         description: Album or connection not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Server error
  */

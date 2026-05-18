@@ -23,7 +23,7 @@ const { createError } = require("../../utils/createError");
  * - Regular users cannot access this route.
  */
 
-const getAllAlbums = async (req, res, next) => {
+const getAllAlbums = async (_req, res, next) => {
 	try {
 		const albums = await Album.find().populate("addedBy", "name email");
 		return sendResponse(res, 200, true, "Albums fetched successfully", albums);
@@ -35,39 +35,36 @@ const getAllAlbums = async (req, res, next) => {
 /**
  * Controller: deleteAlbum
  * -----------------------
- * Deletes an album by its ID (admin-only operation).
+ * Deletes any album by its ID regardless of ownership (admin-only operation).
  *
  * Workflow:
- * 1. If the album has a cover image in Cloudinary → deletes it using `deleteImgCloudinary()`.
- * 2. Extracts the album ID from `req.params.id`.
- * 3. Deletes the album from the database using `findByIdAndDelete`.
- * 4. Returns a 200 response with the deleted album data.
+ * 1. Extracts the album ID from `req.params.id`.
+ * 2. Fetches the album document → throws 404 if not found.
+ * 3. If the album has a cover image stored in Cloudinary, deletes it via `deleteImgCloudinary()`.
+ * 4. Deletes the album document from the database using `findByIdAndDelete`.
+ * 5. Returns 200 with the deleted album document.
  *
  * Error Handling:
- * - If no album is found or a deletion error occurs, forwards the error to the global handler.
- *
- * Notes:
- * - Always check for the existence of `albumDeleted` before accessing its properties.
- * - Used primarily by admins to manage inappropriate or duplicate entries.
+ * - 404 if no album with the given ID exists.
+ * - Any other database or Cloudinary error is forwarded to the global error handler.
  */
 
 const deleteAlbum = async (req, res, next) => {
 	try {
-		// If there is an image, delete it
-		if (req.album.coverArtId) {
-			await deleteImgCloudinary(req.album.coverArtId);
+		const { id } = req.params;
+		const album = await Album.findById(id);
+
+		if (!album) {
+			throw createError(404, "Album not found");
 		}
 
-		//Delete the album
-		await Album.findByIdAndDelete(req.album._id);
+		if (album.coverArtId) {
+			await deleteImgCloudinary(album.coverArtId);
+		}
 
-		return sendResponse(
-			res,
-			200,
-			true,
-			"Album deleted successfully",
-			req.album,
-		);
+		await Album.findByIdAndDelete(id);
+
+		return sendResponse(res, 200, true, "Album deleted successfully", album);
 	} catch (error) {
 		next(error);
 	}
@@ -90,9 +87,9 @@ const deleteAlbum = async (req, res, next) => {
  * - Useful for admin panels, moderation tools, or analytics dashboards.
  */
 
-const getAllUsers = async (req, res, next) => {
+const getAllUsers = async (_req, res, next) => {
 	try {
-		const users = await User.find();
+		const users = await User.find().select("-password -profileImageId");
 		return sendResponse(res, 200, true, "Users fetched successfully", users);
 	} catch (error) {
 		next(error);
@@ -146,9 +143,51 @@ const deleteUser = async (req, res, next) => {
 	}
 };
 
+/**
+ * Controller: changeUserRole
+ * --------------------------
+ * Allows an admin to change the role of any user.
+ *
+ * Workflow:
+ * 1. Extracts the user ID from req.params.id and the new role from req.body.role.
+ * 2. Validates that the provided role is one of the allowed values.
+ * 3. Updates the user's role and returns the updated document.
+ *
+ * Error Handling:
+ * - 400 if the role is invalid.
+ * - 404 if the user is not found.
+ */
+
+const changeUserRole = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+		const { role } = req.body;
+
+		const allowedRoles = ["user", "admin"];
+		if (!allowedRoles.includes(role)) {
+			throw createError(400, `Invalid role. Allowed values: ${allowedRoles.join(", ")}`);
+		}
+
+		const updatedUser = await User.findByIdAndUpdate(
+			id,
+			{ role },
+			{ new: true, runValidators: true },
+		);
+
+		if (!updatedUser) {
+			throw createError(404, "User not found");
+		}
+
+		return sendResponse(res, 200, true, `User role updated to '${role}'`, updatedUser);
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	getAllAlbums,
 	deleteAlbum,
 	getAllUsers,
 	deleteUser,
+	changeUserRole,
 };

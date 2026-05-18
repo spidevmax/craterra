@@ -21,7 +21,12 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
  * - Requires CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
  * - connectCloudinary() must be called before this middleware is used
  *
- * How It Works:
+ * Test Mode:
+ * When NODE_ENV === "test", uses multer.memoryStorage() instead of CloudinaryStorage so
+ * that no real Cloudinary calls are made during testing. req.file.path and req.file.filename
+ * will not be set by Cloudinary — tests should not upload actual files.
+ *
+ * How It Works (production):
  * 1. Receives file from multipart/form-data request
  * 2. Automatically uploads to Cloudinary/albums folder
  * 3. Sets req.file.path = Cloudinary URL
@@ -58,14 +63,19 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
  *   album.coverArtId = req.file.filename;   // Save public ID for deletion
  * }
  */
-const storage = new CloudinaryStorage({
-	cloudinary,
-	params: {
-		folder: "Craterra/albums",
-		allowedFormats: ["jpg", "png", "jpeg", "gif", "webp"],
-	},
-});
+let uploadAlbumCover;
 
-const uploadAlbumCover = multer({ storage });
+if (process.env.NODE_ENV === "test") {
+	uploadAlbumCover = multer({ storage: multer.memoryStorage() });
+} else {
+	const storage = new CloudinaryStorage({
+		cloudinary,
+		params: {
+			folder: "Craterra/albums",
+			allowedFormats: ["jpg", "png", "jpeg", "gif", "webp"],
+		},
+	});
+	uploadAlbumCover = multer({ storage });
+}
 
 module.exports = { uploadAlbumCover };

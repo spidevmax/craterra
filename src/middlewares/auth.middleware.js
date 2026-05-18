@@ -32,7 +32,7 @@ const { createError } = require("../utils/createError");
  */
 
 const isAuth = (allowedRoles = []) => {
-	return async (req, res, next) => {
+	return async (req, _res, next) => {
 		try {
 			const token = req.headers.authorization?.replace("Bearer ", "");
 
@@ -80,7 +80,7 @@ const isAuth = (allowedRoles = []) => {
  * - Works in combination with isAuth middleware to ensure req.user exists.
  */
 
-const isOwner = async (req, res, next) => {
+const isOwner = async (req, _res, next) => {
 	try {
 		const album = await Album.findById(req.params.id);
 
@@ -99,4 +99,48 @@ const isOwner = async (req, res, next) => {
 	}
 };
 
-module.exports = { isAuth, isOwner };
+/**
+ * Middleware: isAdmin
+ * -------------------
+ * Standalone check that the authenticated user has the "admin" role.
+ * Must be used after isAuth so that req.user is already populated.
+ *
+ * Usage:
+ *   router.delete("/users/:id", isAuth([]), isAdmin, deleteUser);
+ */
+const isAdmin = (req, _res, next) => {
+	if (req.user?.role !== "admin") {
+		return next(createError(403, "Access denied: admin role required"));
+	}
+	next();
+};
+
+/**
+ * Middleware: isOwnerOrAdmin
+ * --------------------------
+ * Generic ownership check. Verifies that req.user is either the owner
+ * of a resource (by comparing resource[field] with req.user._id) or an admin.
+ *
+ * @param {string} field - Field on req.resource that holds the owner ID (default: "user")
+ *
+ * Usage:
+ *   router.delete("/:id", isAuth([]), loadResource, isOwnerOrAdmin("addedBy"), handler);
+ */
+const isOwnerOrAdmin = (field = "user") => {
+	return (req, _res, next) => {
+		if (req.user?.role === "admin") return next();
+
+		const resource = req.album || req.resource;
+		if (!resource) {
+			return next(createError(404, "Resource not found"));
+		}
+
+		if (resource[field]?.toString() !== req.user._id.toString()) {
+			return next(createError(403, "Not authorized"));
+		}
+
+		next();
+	};
+};
+
+module.exports = { isAuth, isOwner, isAdmin, isOwnerOrAdmin };
