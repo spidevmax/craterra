@@ -198,6 +198,12 @@ const createAlbumValidations = [
 		.optional()
 		.isString()
 		.withMessage("Listening context must be a string"),
+
+	body("rating")
+		.optional()
+		.isFloat({ min: 0, max: 10 })
+		.withMessage("Rating must be a number between 0 and 10")
+		.toFloat(),
 ];
 
 /**
@@ -400,6 +406,12 @@ const updateAlbumValidations = [
 		.optional()
 		.isString()
 		.withMessage("Listening context must be a string"),
+
+	body("rating")
+		.optional()
+		.isFloat({ min: 0, max: 10 })
+		.withMessage("Rating must be a number between 0 and 10")
+		.toFloat(),
 ];
 
 /**

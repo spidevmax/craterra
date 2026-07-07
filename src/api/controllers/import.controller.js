@@ -1,5 +1,5 @@
 const { parse } = require("csv-parse/sync");
-const Album = require("../models/Album.model");
+const Album = require("../models/album.model");
 const { sendResponse } = require("../../utils/sendResponse");
 
 const VALID_FORMATS = ["LP", "EP", "Reissue", "Live", "Compilation", "Box Set", "Holiday", "Instrumental", "Remix", "Soundtrack", "Mixtape"];

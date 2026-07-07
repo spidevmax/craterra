@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const albumSchema = new mongoose.Schema(
 	{
 		title: { type: String, required: true, trim: true },
-		artists: [{ type: String, trim: true }],
+		artists: { type: [{ type: String, trim: true }], required: true },
 		format: {
 			type: String,
 			enum: [
@@ -23,6 +23,8 @@ const albumSchema = new mongoose.Schema(
 		releaseDate: { type: Date },
 		labels: [{ type: String, trim: true }],
 		genres: [{ type: String, trim: true }],
+		scenes: [{ type: String, trim: true }],
+		movements: [{ type: String, trim: true }],
 		coverArtUrl: { type: String, trim: true },
 		coverArtId: { type: String, trim: true },
 		personalNote: {

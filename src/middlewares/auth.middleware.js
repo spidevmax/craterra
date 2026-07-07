@@ -1,5 +1,5 @@
-const Album = require("../api/models/Album.model");
-const User = require("../api/models/User.model");
+const Album = require("../api/models/album.model");
+const User = require("../api/models/user.model");
 const { verifyToken } = require("../utils/token");
 const { createError } = require("../utils/createError");
 

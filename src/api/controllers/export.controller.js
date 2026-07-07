@@ -1,4 +1,4 @@
-const Album = require("../models/Album.model");
+const Album = require("../models/album.model");
 
 const HEADERS = [
 	"Name",

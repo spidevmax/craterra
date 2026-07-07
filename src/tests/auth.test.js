@@ -13,6 +13,18 @@ describe("Auth — POST /register", () => {
 		expect(res.body.data).toHaveProperty("email", "test@example.com");
 	});
 
+	it("always registers users with user role → 201", async () => {
+		const res = await request(app).post("/api/v1/auth/register").send({
+			name: "Role User",
+			email: "role@example.com",
+			password: "SecurePass123",
+			role: "admin",
+		});
+
+		expect(res.status).toBe(201);
+		expect(res.body.data.role).toBe("user");
+	});
+
 	it("rejects duplicate email → 400", async () => {
 		await request(app).post("/api/v1/auth/register").send({
 			name: "Test User",
@@ -31,6 +43,16 @@ describe("Auth — POST /register", () => {
 		const res = await request(app).post("/api/v1/auth/register").send({
 			email: "incomplete@example.com",
 		});
+		expect(res.status).toBe(400);
+	});
+
+	it("rejects invalid email → 400", async () => {
+		const res = await request(app).post("/api/v1/auth/register").send({
+			name: "Invalid Email",
+			email: "not-an-email",
+			password: "SecurePass123",
+		});
+
 		expect(res.status).toBe(400);
 	});
 });
@@ -54,12 +76,12 @@ describe("Auth — POST /login", () => {
 		expect(typeof res.body.data).toBe("string");
 	});
 
-	it("rejects non-existent email → 404", async () => {
+	it("rejects non-existent email → 401", async () => {
 		const res = await request(app).post("/api/v1/auth/login").send({
 			email: "notexist@example.com",
 			password: "SecurePass123",
 		});
-		expect(res.status).toBe(404);
+		expect(res.status).toBe(401);
 	});
 
 	it("rejects wrong password → 401", async () => {
@@ -68,5 +90,22 @@ describe("Auth — POST /login", () => {
 			password: "WrongPassword123",
 		});
 		expect(res.status).toBe(401);
+	});
+
+	it("rejects missing password → 400", async () => {
+		const res = await request(app).post("/api/v1/auth/login").send({
+			email: "login@example.com",
+		});
+
+		expect(res.status).toBe(400);
+	});
+
+	it("rejects invalid email format → 400", async () => {
+		const res = await request(app).post("/api/v1/auth/login").send({
+			email: "invalid-email",
+			password: "SecurePass123",
+		});
+
+		expect(res.status).toBe(400);
 	});
 });

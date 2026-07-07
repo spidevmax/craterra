@@ -1,4 +1,4 @@
-const User = require("../models/User.model");
+const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../../utils/token");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
@@ -48,7 +48,7 @@ const registerUser = async (req, res, next) => {
 			throw createError(400, "This user already exists");
 		}
 
-		const user = new User(req.body);
+		const user = new User({ ...req.body, role: "user" });
 
 		// Upload image to Cloudinary if provided
 		if (req.file) {

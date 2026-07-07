@@ -1,4 +1,4 @@
-# Craterra 🎵
+# Craterra 
 
 A **personal knowledge management (PKM) API** for music curation and discovery. Craterra is a digital garden inspired by Obsidian where users create their own album database, annotate with personal reflections, and build semantic connections between records.
 
@@ -20,43 +20,43 @@ Craterra is built for music enthusiasts who want to:
 
 ## Features
 
-✅ **User Management**
+**User Management**
 - User registration & authentication (JWT tokens)
 - Role-based access (admin/user)
 - Profile management with image uploads
 
-✅ **Album Management**
+**Album Management**
 - CRUD operations with full metadata support
 - Automatic duplicate detection (title + artists per user)
 - Word count calculation on personal notes (pre-save hook)
 - Cloudinary image integration with automatic cleanup
 
-✅ **Notion Import**
+**Notion Import**
 - Bulk import albums from a Notion database CSV export
 - Maps Notion fields automatically (Title, Artist, Release Date, Format, Label, Main Genre, Subgenre, Scene, Movements, Release Country, Cover, URL, Rating, Release Status, Favourite)
 - Handles Notion-specific formats (relation fields, DD/MM/YYYY dates, multi-select)
 - Skips duplicates automatically
 - Returns a detailed report: imported, skipped, errors
 
-✅ **CSV Export**
+**CSV Export**
 - Export your full library as a CSV file
 - Column names match the Notion import format (can be re-imported into Notion or this app)
 - UTF-8 BOM prefix for Excel/Google Sheets compatibility
 
-✅ **Music Graph / Obsidian-like Connections**
+**Music Graph / Obsidian-like Connections**
 - Create semantic connections between albums
 - 8 connection types: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples
 - Populate related album data in queries
 - Export graph as nodes/edges for visualization
 
-✅ **Advanced Metadata**
+**Advanced Metadata**
 - Emotional dimensions (melancholic, euphoric, anxious, etc.)
 - Sonic characteristics (lo-fi, polished, experimental, etc.)
 - Listening context (first listen, frequency, context notes)
 - Multiple genres, labels, artists per album
 - Rating (0–10), favourite flag, release country, external URL
 
-✅ **Documentation**
+**Documentation**
 - Swagger/OpenAPI specs for all endpoints
 - Comprehensive error handling
 
@@ -118,7 +118,7 @@ craterra/
 
 1. **Clone repository**
 ```bash
-git clone https://github.com/yourusername/craterra.git
+git clone https://github.com/spidevmax/craterra
 cd craterra
 ```
 
@@ -320,6 +320,3 @@ Common status codes:
 
 MIT
 
----
-
-**built with 🎵 for music lovers**

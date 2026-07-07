@@ -1,13 +1,17 @@
 const request = require("supertest");
 const app = require("../../app");
-const User = require("../api/models/User.model");
+const User = require("../api/models/user.model");
 const { generateToken } = require("../utils/token");
 
+let sequence = 0;
+
+const uniqueSuffix = () => `${Date.now()}-${sequence++}`;
+
 const createUser = async (overrides = {}) => {
-	const ts = Date.now();
+	const suffix = uniqueSuffix();
 	const credentials = {
 		name: "Test User",
-		email: `test-${ts}@example.com`,
+		email: `test-${suffix}@example.com`,
 		password: "SecurePass123",
 		...overrides,
 	};
@@ -19,12 +23,13 @@ const createUser = async (overrides = {}) => {
 	return { user: regRes.body.data, token: loginRes.body.data };
 };
 
-const createAdmin = async () => {
+const createAdmin = async (overrides = {}) => {
 	const admin = await User.create({
 		name: "Admin User",
-		email: `admin-${Date.now()}@example.com`,
+		email: `admin-${uniqueSuffix()}@example.com`,
 		password: "AdminPass123",
 		role: "admin",
+		...overrides,
 	});
 	const token = generateToken(admin._id, admin.email);
 	return { user: admin, token };

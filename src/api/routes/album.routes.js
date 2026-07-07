@@ -26,6 +26,19 @@ const albumsRouter = require("express").Router();
 
 albumsRouter.use(isAuth([]));
 
+const handleCSVUpload = (req, res, next) => {
+	uploadCSV.single("file")(req, res, (err) => {
+		if (err) {
+			err.status = 400;
+			if (err.code === "LIMIT_FILE_SIZE") {
+				err.message = "File exceeds 5MB limit";
+			}
+			return next(err);
+		}
+		next();
+	});
+};
+
 /**
  * @swagger
  * /api/v1/albums:
@@ -238,6 +251,8 @@ albumsRouter.post(
 	handleValidationErrors,
 	postAlbum,
 ); // → POST /api/v1/albums
+
+albumsRouter.get("/export", exportAlbums); // → GET /api/v1/albums/export
 
 /**
  * @swagger
@@ -513,7 +528,7 @@ albumsRouter.delete("/:id", isOwner, deleteAlbum); // → DELETE /api/v1/albums/
  *       500:
  *         description: Server error
  */
-albumsRouter.post("/import", uploadCSV.single("file"), importAlbums); // → POST /api/v1/albums/import
+albumsRouter.post("/import", handleCSVUpload, importAlbums); // → POST /api/v1/albums/import
 
 /**
  * @swagger
@@ -543,8 +558,6 @@ albumsRouter.post("/import", uploadCSV.single("file"), importAlbums); // → POS
  *       500:
  *         description: Server error
  */
-albumsRouter.get("/export", exportAlbums); // → GET /api/v1/albums/export
-
 /**
  * @swagger
  * /api/v1/albums/{id}/connections:

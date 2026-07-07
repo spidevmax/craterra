@@ -55,7 +55,7 @@ app.use("/api/v1/users", apiLimiter, usersRouter);
 app.use("/api/v1/admin", apiLimiter, adminRouter);
 
 // ── Health check ─────────────────────────────────────────────────────────────
-app.get("/", (_req, res) => {
+app.get("/", (req, res) => {
 	return sendResponse(res, 200, true, "Craterra API", {
 		version: "1.0.0",
 		documentation: "/api/v1/docs",
@@ -63,12 +63,12 @@ app.get("/", (_req, res) => {
 });
 
 // ── 404 handler ──────────────────────────────────────────────────────────────
-app.use((_req, res) => {
+app.use((req, res) => {
 	return sendResponse(res, 404, false, "Route not found");
 });
 
 // ── Global error handler ─────────────────────────────────────────────────────
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, next) => {
 	console.error(`[Error] ${err.status || 500}: ${err.message}`);
 	return sendResponse(res, err.status || 500, false, err.message || "Unexpected error");
 });

@@ -1,5 +1,5 @@
+const Album = require("../models/album.model");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
-const Album = require("../models/Album.model");
 const { sendResponse } = require("../../utils/sendResponse");
 const { createError } = require("../../utils/createError");
 
@@ -213,6 +213,10 @@ const deleteAlbum = async (req, res, next) => {
 
 		//Delete the album
 		await Album.findByIdAndDelete(req.album._id);
+		await Album.updateMany(
+			{ "connections.album": req.album._id },
+			{ $pull: { connections: { album: req.album._id } } },
+		);
 
 		return sendResponse(res, 200, true, "Album deleted successfully", req.album);
 	} catch (error) {
@@ -416,7 +420,13 @@ const deleteConnection = async (req, res, next) => {
 			throw createError(404, "Album not found");
 		}
 
-		album.connections.id(connectionId).deleteOne();
+		const connection = album.connections.id(connectionId);
+
+		if (!connection) {
+			throw createError(404, "Connection not found");
+		}
+
+		connection.deleteOne();
 		const updated = await album.save();
 		const populated = await updated.populate(
 			"connections.album",
