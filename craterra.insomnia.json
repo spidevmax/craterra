@@ -1,366 +1,417 @@
 {
-  "_type": "export",
-  "__export_format": 4,
-  "__export_date": "2026-03-23T00:00:00.000Z",
-  "__export_source": "craterra",
-  "resources": [
-    {
-      "_id": "wrk_craterra",
-      "_type": "workspace",
-      "name": "Craterra API",
-      "description": "Personal knowledge management API for music curation",
-      "parentId": null,
-      "scope": "collection"
-    },
-    {
-      "_id": "env_base",
-      "_type": "environment",
-      "name": "Base Environment",
-      "parentId": "wrk_craterra",
-      "data": {
-        "base_url": "http://localhost:8080/api/v1",
-        "token": "",
-        "albumId": "",
-        "connectionId": "",
-        "userId": ""
-      }
-    },
+	"_type": "export",
+	"__export_format": 4,
+	"__export_date": "2026-03-23T00:00:00.000Z",
+	"__export_source": "craterra",
+	"resources": [
+		{
+			"_id": "wrk_craterra",
+			"_type": "workspace",
+			"name": "Craterra API",
+			"description": "Personal knowledge management API for music curation",
+			"parentId": null,
+			"scope": "collection"
+		},
+		{
+			"_id": "env_base",
+			"_type": "environment",
+			"name": "Base Environment",
+			"parentId": "wrk_craterra",
+			"data": {
+				"base_url": "http://localhost:8080/api/v1",
+				"token": "",
+				"albumId": "",
+				"connectionId": "",
+				"userId": ""
+			}
+		},
 
-    { "_id": "fld_auth",    "_type": "request_group", "name": "🔐 Auth",         "parentId": "wrk_craterra", "sortKey": 1 },
-    { "_id": "fld_albums",  "_type": "request_group", "name": "💿 Albums",        "parentId": "wrk_craterra", "sortKey": 2 },
-    { "_id": "fld_io",      "_type": "request_group", "name": "📥 Import / Export","parentId": "wrk_craterra", "sortKey": 3 },
-    { "_id": "fld_conn",    "_type": "request_group", "name": "🔗 Connections",   "parentId": "wrk_craterra", "sortKey": 4 },
-    { "_id": "fld_users",   "_type": "request_group", "name": "👤 Users",         "parentId": "wrk_craterra", "sortKey": 5 },
-    { "_id": "fld_admin",   "_type": "request_group", "name": "🛡 Admin",         "parentId": "wrk_craterra", "sortKey": 6 },
-    { "_id": "fld_errors",  "_type": "request_group", "name": "❌ Errors",        "parentId": "wrk_craterra", "sortKey": 7 },
+		{
+			"_id": "fld_auth",
+			"_type": "request_group",
+			"name": "Auth",
+			"parentId": "wrk_craterra",
+			"sortKey": 1
+		},
+		{
+			"_id": "fld_albums",
+			"_type": "request_group",
+			"name": "Albums",
+			"parentId": "wrk_craterra",
+			"sortKey": 2
+		},
+		{
+			"_id": "fld_io",
+			"_type": "request_group",
+			"name": "Import / Export",
+			"parentId": "wrk_craterra",
+			"sortKey": 3
+		},
+		{
+			"_id": "fld_conn",
+			"_type": "request_group",
+			"name": "Connections",
+			"parentId": "wrk_craterra",
+			"sortKey": 4
+		},
+		{
+			"_id": "fld_users",
+			"_type": "request_group",
+			"name": "Users",
+			"parentId": "wrk_craterra",
+			"sortKey": 5
+		},
+		{
+			"_id": "fld_admin",
+			"_type": "request_group",
+			"name": "Admin",
+			"parentId": "wrk_craterra",
+			"sortKey": 6
+		},
+		{
+			"_id": "fld_errors",
+			"_type": "request_group",
+			"name": "Errors",
+			"parentId": "wrk_craterra",
+			"sortKey": 7
+		},
 
-    {
-      "_id": "req_register",
-      "_type": "request",
-      "name": "Register",
-      "parentId": "fld_auth",
-      "method": "POST",
-      "url": "{{ _.base_url }}/auth/register",
-      "headers": [],
-      "body": {
-        "mimeType": "multipart/form-data",
-        "params": [
-          { "name": "name",     "value": "Test User" },
-          { "name": "email",    "value": "test@craterra.com" },
-          { "name": "password", "value": "test1234" }
-        ]
-      }
-    },
-    {
-      "_id": "req_login",
-      "_type": "request",
-      "name": "Login → copy token to env",
-      "parentId": "fld_auth",
-      "method": "POST",
-      "url": "{{ _.base_url }}/auth/login",
-      "headers": [{ "name": "Content-Type", "value": "application/json" }],
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"email\": \"admin@craterra.com\",\n  \"password\": \"admin1234\"\n}"
-      }
-    },
+		{
+			"_id": "req_register",
+			"_type": "request",
+			"name": "Register",
+			"parentId": "fld_auth",
+			"method": "POST",
+			"url": "{{ _.base_url }}/auth/register",
+			"headers": [],
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [
+					{ "name": "name", "value": "Test User" },
+					{ "name": "email", "value": "test@craterra.com" },
+					{ "name": "password", "value": "test1234" }
+				]
+			}
+		},
+		{
+			"_id": "req_login",
+			"_type": "request",
+			"name": "Login → copy token to env",
+			"parentId": "fld_auth",
+			"method": "POST",
+			"url": "{{ _.base_url }}/auth/login",
+			"headers": [{ "name": "Content-Type", "value": "application/json" }],
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"email\": \"admin@craterra.com\",\n  \"password\": \"admin1234\"\n}"
+			}
+		},
 
-    {
-      "_id": "req_get_albums",
-      "_type": "request",
-      "name": "Get my albums",
-      "parentId": "fld_albums",
-      "method": "GET",
-      "url": "{{ _.base_url }}/albums",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_get_album",
-      "_type": "request",
-      "name": "Get album by ID",
-      "parentId": "fld_albums",
-      "method": "GET",
-      "url": "{{ _.base_url }}/albums/{{ _.albumId }}",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_post_album",
-      "_type": "request",
-      "name": "Create album",
-      "parentId": "fld_albums",
-      "method": "POST",
-      "url": "{{ _.base_url }}/albums",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {
-        "mimeType": "multipart/form-data",
-        "params": [
-          { "name": "title",         "value": "OK Computer" },
-          { "name": "artists[]",     "value": "Radiohead" },
-          { "name": "format",        "value": "LP" },
-          { "name": "releaseDate",   "value": "1997-05-21" },
-          { "name": "labels[]",      "value": "Parlophone" },
-          { "name": "genres[]",      "value": "Alternative Rock" },
-          { "name": "genres[]",      "value": "Art Rock" },
-          { "name": "rating",        "value": "10" },
-          { "name": "favourite",     "value": "true" },
-          { "name": "releaseCountry","value": "United Kingdom" },
-          { "name": "externalUrl",   "value": "https://music.apple.com/album/ok-computer" }
-        ]
-      }
-    },
-    {
-      "_id": "req_put_album",
-      "_type": "request",
-      "name": "Update album",
-      "parentId": "fld_albums",
-      "method": "PUT",
-      "url": "{{ _.base_url }}/albums/{{ _.albumId }}",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {
-        "mimeType": "multipart/form-data",
-        "params": [
-          { "name": "rating",    "value": "9" },
-          { "name": "favourite", "value": "false" }
-        ]
-      }
-    },
-    {
-      "_id": "req_delete_album",
-      "_type": "request",
-      "name": "Delete album",
-      "parentId": "fld_albums",
-      "method": "DELETE",
-      "url": "{{ _.base_url }}/albums/{{ _.albumId }}",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_graph",
-      "_type": "request",
-      "name": "Get album graph",
-      "parentId": "fld_albums",
-      "method": "GET",
-      "url": "{{ _.base_url }}/albums/graph/all",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
+		{
+			"_id": "req_get_albums",
+			"_type": "request",
+			"name": "Get my albums",
+			"parentId": "fld_albums",
+			"method": "GET",
+			"url": "{{ _.base_url }}/albums",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_get_album",
+			"_type": "request",
+			"name": "Get album by ID",
+			"parentId": "fld_albums",
+			"method": "GET",
+			"url": "{{ _.base_url }}/albums/{{ _.albumId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_post_album",
+			"_type": "request",
+			"name": "Create album",
+			"parentId": "fld_albums",
+			"method": "POST",
+			"url": "{{ _.base_url }}/albums",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [
+					{ "name": "title", "value": "OK Computer" },
+					{ "name": "artists[]", "value": "Radiohead" },
+					{ "name": "format", "value": "LP" },
+					{ "name": "releaseDate", "value": "1997-05-21" },
+					{ "name": "labels[]", "value": "Parlophone" },
+					{ "name": "genres[]", "value": "Alternative Rock" },
+					{ "name": "genres[]", "value": "Art Rock" },
+					{ "name": "rating", "value": "10" },
+					{ "name": "favourite", "value": "true" },
+					{ "name": "releaseCountry", "value": "United Kingdom" },
+					{ "name": "externalUrl", "value": "https://music.apple.com/album/ok-computer" }
+				]
+			}
+		},
+		{
+			"_id": "req_put_album",
+			"_type": "request",
+			"name": "Update album",
+			"parentId": "fld_albums",
+			"method": "PUT",
+			"url": "{{ _.base_url }}/albums/{{ _.albumId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [{ "name": "rating", "value": "9" }, { "name": "favourite", "value": "false" }]
+			}
+		},
+		{
+			"_id": "req_delete_album",
+			"_type": "request",
+			"name": "Delete album",
+			"parentId": "fld_albums",
+			"method": "DELETE",
+			"url": "{{ _.base_url }}/albums/{{ _.albumId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_graph",
+			"_type": "request",
+			"name": "Get album graph",
+			"parentId": "fld_albums",
+			"method": "GET",
+			"url": "{{ _.base_url }}/albums/graph/all",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
 
-    {
-      "_id": "req_import",
-      "_type": "request",
-      "name": "Import from Notion CSV",
-      "parentId": "fld_io",
-      "method": "POST",
-      "url": "{{ _.base_url }}/albums/import",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {
-        "mimeType": "multipart/form-data",
-        "params": [
-          { "name": "file", "fileName": "/path/to/your-notion-export.csv", "type": "file" }
-        ]
-      }
-    },
-    {
-      "_id": "req_export",
-      "_type": "request",
-      "name": "Export library as CSV",
-      "parentId": "fld_io",
-      "method": "GET",
-      "url": "{{ _.base_url }}/albums/export",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
+		{
+			"_id": "req_import",
+			"_type": "request",
+			"name": "Import from Notion CSV",
+			"parentId": "fld_io",
+			"method": "POST",
+			"url": "{{ _.base_url }}/albums/import",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [{ "name": "file", "fileName": "/path/to/your-notion-export.csv", "type": "file" }]
+			}
+		},
+		{
+			"_id": "req_export",
+			"_type": "request",
+			"name": "Export library as CSV",
+			"parentId": "fld_io",
+			"method": "GET",
+			"url": "{{ _.base_url }}/albums/export",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
 
-    {
-      "_id": "req_add_conn",
-      "_type": "request",
-      "name": "Add connection",
-      "parentId": "fld_conn",
-      "method": "POST",
-      "url": "{{ _.base_url }}/albums/{{ _.albumId }}/connections",
-      "headers": [
-        { "name": "Authorization", "value": "Bearer {{ _.token }}" },
-        { "name": "Content-Type",  "value": "application/json" }
-      ],
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"targetAlbumId\": \"PASTE_TARGET_ALBUM_ID\",\n  \"type\": \"influences\",\n  \"note\": \"Huge influence on the genre\"\n}"
-      }
-    },
-    {
-      "_id": "req_update_conn",
-      "_type": "request",
-      "name": "Update connection",
-      "parentId": "fld_conn",
-      "method": "PUT",
-      "url": "{{ _.base_url }}/albums/{{ _.albumId }}/connections/{{ _.connectionId }}",
-      "headers": [
-        { "name": "Authorization", "value": "Bearer {{ _.token }}" },
-        { "name": "Content-Type",  "value": "application/json" }
-      ],
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"type\": \"similar-to\",\n  \"note\": \"Updated note\"\n}"
-      }
-    },
-    {
-      "_id": "req_delete_conn",
-      "_type": "request",
-      "name": "Delete connection",
-      "parentId": "fld_conn",
-      "method": "DELETE",
-      "url": "{{ _.base_url }}/albums/{{ _.albumId }}/connections/{{ _.connectionId }}",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
+		{
+			"_id": "req_add_conn",
+			"_type": "request",
+			"name": "Add connection",
+			"parentId": "fld_conn",
+			"method": "POST",
+			"url": "{{ _.base_url }}/albums/{{ _.albumId }}/connections",
+			"headers": [
+				{ "name": "Authorization", "value": "Bearer {{ _.token }}" },
+				{ "name": "Content-Type", "value": "application/json" }
+			],
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"targetAlbumId\": \"PASTE_TARGET_ALBUM_ID\",\n  \"type\": \"influences\",\n  \"note\": \"Huge influence on the genre\"\n}"
+			}
+		},
+		{
+			"_id": "req_update_conn",
+			"_type": "request",
+			"name": "Update connection",
+			"parentId": "fld_conn",
+			"method": "PUT",
+			"url": "{{ _.base_url }}/albums/{{ _.albumId }}/connections/{{ _.connectionId }}",
+			"headers": [
+				{ "name": "Authorization", "value": "Bearer {{ _.token }}" },
+				{ "name": "Content-Type", "value": "application/json" }
+			],
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"type\": \"similar-to\",\n  \"note\": \"Updated note\"\n}"
+			}
+		},
+		{
+			"_id": "req_delete_conn",
+			"_type": "request",
+			"name": "Delete connection",
+			"parentId": "fld_conn",
+			"method": "DELETE",
+			"url": "{{ _.base_url }}/albums/{{ _.albumId }}/connections/{{ _.connectionId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
 
-    {
-      "_id": "req_get_profile",
-      "_type": "request",
-      "name": "Get my profile",
-      "parentId": "fld_users",
-      "method": "GET",
-      "url": "{{ _.base_url }}/users/me",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_update_profile",
-      "_type": "request",
-      "name": "Update profile",
-      "parentId": "fld_users",
-      "method": "PUT",
-      "url": "{{ _.base_url }}/users/me",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {
-        "mimeType": "multipart/form-data",
-        "params": [
-          { "name": "name", "value": "Updated Name" }
-        ]
-      }
-    },
-    {
-      "_id": "req_change_password",
-      "_type": "request",
-      "name": "Change password",
-      "parentId": "fld_users",
-      "method": "PUT",
-      "url": "{{ _.base_url }}/users/change-password",
-      "headers": [
-        { "name": "Authorization", "value": "Bearer {{ _.token }}" },
-        { "name": "Content-Type",  "value": "application/json" }
-      ],
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"currentPassword\": \"admin1234\",\n  \"newPassword\": \"newpassword1234\"\n}"
-      }
-    },
-    {
-      "_id": "req_delete_account",
-      "_type": "request",
-      "name": "Delete my account ⚠️",
-      "parentId": "fld_users",
-      "method": "DELETE",
-      "url": "{{ _.base_url }}/users/me",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
+		{
+			"_id": "req_get_profile",
+			"_type": "request",
+			"name": "Get my profile",
+			"parentId": "fld_users",
+			"method": "GET",
+			"url": "{{ _.base_url }}/users/me",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_update_profile",
+			"_type": "request",
+			"name": "Update profile",
+			"parentId": "fld_users",
+			"method": "PUT",
+			"url": "{{ _.base_url }}/users/me",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {
+				"mimeType": "multipart/form-data",
+				"params": [{ "name": "name", "value": "Updated Name" }]
+			}
+		},
+		{
+			"_id": "req_change_password",
+			"_type": "request",
+			"name": "Change password",
+			"parentId": "fld_users",
+			"method": "PUT",
+			"url": "{{ _.base_url }}/users/change-password",
+			"headers": [
+				{ "name": "Authorization", "value": "Bearer {{ _.token }}" },
+				{ "name": "Content-Type", "value": "application/json" }
+			],
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"currentPassword\": \"admin1234\",\n  \"newPassword\": \"newpassword1234\",\n  \"confirmPassword\": \"newpassword1234\"\n}"
+			}
+		},
+		{
+			"_id": "req_delete_account",
+			"_type": "request",
+			"name": "Delete my account",
+			"parentId": "fld_users",
+			"method": "DELETE",
+			"url": "{{ _.base_url }}/users/me",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
 
-    {
-      "_id": "req_admin_albums",
-      "_type": "request",
-      "name": "Get all albums (admin)",
-      "parentId": "fld_admin",
-      "method": "GET",
-      "url": "{{ _.base_url }}/admin/albums",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_admin_users",
-      "_type": "request",
-      "name": "Get all users (admin)",
-      "parentId": "fld_admin",
-      "method": "GET",
-      "url": "{{ _.base_url }}/admin/users",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_admin_delete_album",
-      "_type": "request",
-      "name": "Delete album (admin) ⚠️",
-      "parentId": "fld_admin",
-      "method": "DELETE",
-      "url": "{{ _.base_url }}/admin/albums/{{ _.albumId }}",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_admin_delete_user",
-      "_type": "request",
-      "name": "Delete user (admin) ⚠️",
-      "parentId": "fld_admin",
-      "method": "DELETE",
-      "url": "{{ _.base_url }}/admin/users/{{ _.userId }}",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
+		{
+			"_id": "req_admin_albums",
+			"_type": "request",
+			"name": "Get all albums (admin)",
+			"parentId": "fld_admin",
+			"method": "GET",
+			"url": "{{ _.base_url }}/admin/albums",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_admin_users",
+			"_type": "request",
+			"name": "Get all users (admin)",
+			"parentId": "fld_admin",
+			"method": "GET",
+			"url": "{{ _.base_url }}/admin/users",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_admin_delete_album",
+			"_type": "request",
+			"name": "Delete album (admin)",
+			"parentId": "fld_admin",
+			"method": "DELETE",
+			"url": "{{ _.base_url }}/admin/albums/{{ _.albumId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_admin_delete_user",
+			"_type": "request",
+			"name": "Delete user (admin)",
+			"parentId": "fld_admin",
+			"method": "DELETE",
+			"url": "{{ _.base_url }}/admin/users/{{ _.userId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_admin_change_user_role",
+			"_type": "request",
+			"name": "Change user role (admin)",
+			"parentId": "fld_admin",
+			"method": "PATCH",
+			"url": "{{ _.base_url }}/admin/users/{{ _.userId }}/role",
+			"headers": [
+				{ "name": "Authorization", "value": "Bearer {{ _.token }}" },
+				{ "name": "Content-Type", "value": "application/json" }
+			],
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"role\": \"admin\"\n}"
+			}
+		},
 
-    {
-      "_id": "req_err_404",
-      "_type": "request",
-      "name": "404 — Ruta no encontrada",
-      "parentId": "fld_errors",
-      "method": "GET",
-      "url": "{{ _.base_url }}/ruta-inexistente",
-      "headers": [],
-      "body": {}
-    },
-    {
-      "_id": "req_err_401",
-      "_type": "request",
-      "name": "401 — Sin token",
-      "parentId": "fld_errors",
-      "method": "GET",
-      "url": "{{ _.base_url }}/albums",
-      "headers": [],
-      "body": {}
-    },
-    {
-      "_id": "req_err_403",
-      "_type": "request",
-      "name": "403 — Sin permisos de admin",
-      "parentId": "fld_errors",
-      "method": "GET",
-      "url": "{{ _.base_url }}/admin/albums",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    },
-    {
-      "_id": "req_err_400",
-      "_type": "request",
-      "name": "400 — Validación fallida (registro sin contraseña)",
-      "parentId": "fld_errors",
-      "method": "POST",
-      "url": "{{ _.base_url }}/auth/register",
-      "headers": [{ "name": "Content-Type", "value": "application/json" }],
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"email\": \"invalid@craterra.com\",\n  \"password\": \"123\"\n}"
-      }
-    },
-    {
-      "_id": "req_err_404_album",
-      "_type": "request",
-      "name": "404 — Álbum no existe",
-      "parentId": "fld_errors",
-      "method": "GET",
-      "url": "{{ _.base_url }}/albums/000000000000000000000000",
-      "headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
-      "body": {}
-    }
-  ]
+		{
+			"_id": "req_err_404",
+			"_type": "request",
+			"name": "404 — Route not found",
+			"parentId": "fld_errors",
+			"method": "GET",
+			"url": "{{ _.base_url }}/ruta-inexistente",
+			"headers": [],
+			"body": {}
+		},
+		{
+			"_id": "req_err_401",
+			"_type": "request",
+			"name": "401 — No token",
+			"parentId": "fld_errors",
+			"method": "GET",
+			"url": "{{ _.base_url }}/albums",
+			"headers": [],
+			"body": {}
+		},
+		{
+			"_id": "req_err_403",
+			"_type": "request",
+			"name": "403 — Forbidden (admin only)",
+			"parentId": "fld_errors",
+			"method": "GET",
+			"url": "{{ _.base_url }}/admin/albums",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_err_400",
+			"_type": "request",
+			"name": "400 — Bad Request (validation error)",
+			"parentId": "fld_errors",
+			"method": "POST",
+			"url": "{{ _.base_url }}/auth/register",
+			"headers": [{ "name": "Content-Type", "value": "application/json" }],
+			"body": {
+				"mimeType": "application/json",
+				"text": "{\n  \"email\": \"invalid@craterra.com\",\n  \"password\": \"123\"\n}"
+			}
+		},
+		{
+			"_id": "req_err_404_album",
+			"_type": "request",
+			"name": "404 — Album not found",
+			"parentId": "fld_errors",
+			"method": "GET",
+			"url": "{{ _.base_url }}/albums/000000000000000000000000",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		}
+	]
 }

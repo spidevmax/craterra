@@ -79,19 +79,20 @@ const registerUser = async (req, res, next) => {
  *
  * Workflow:
  * 1. Looks up the user by email from `req.body.email` (includes password field explicitly).
- * 2. If no user is found → throws a 404 error.
- * 3. Compares the provided password with the hashed password in the database using bcrypt.
- * 4. If credentials match → generates a JWT containing the user ID and email.
- * 5. Returns a 200 response with the generated token.
- * 6. If password doesn't match → throws a 401 error.
+ * 2. Compares the provided password with the hashed password in the database using bcrypt
+ *    (returns false immediately if no user was found, without leaking that distinction).
+ * 3. If credentials match → generates a JWT containing the user ID and email.
+ * 4. Returns a 200 response with the generated token.
+ * 5. If email doesn't exist OR password doesn't match → throws a 401 error
+ *    (intentionally the same error for both cases, to avoid user enumeration).
  *
  * Error Handling:
- * - Throws a 404 error if the user is not found.
- * - Throws a 401 error if the password is incorrect.
+ * - Throws a 401 error ("Invalid credentials") for both a non-existent email and an
+ *   incorrect password — deliberately indistinguishable to prevent account enumeration.
  * - All errors are caught and forwarded to the global error handler via `next(error)`.
  *
  * Notes:
- * - Uses bcrypt.compareSync() for password verification.
+ * - Uses bcrypt.compare() (async) for password verification, avoiding blocking the event loop.
  * - The password field is excluded from User queries by default (select: false in schema),
  *   so it must be explicitly included with .select("+password").
  * - The generated token payload includes user ID and email for identification.

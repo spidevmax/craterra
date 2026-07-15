@@ -1,312 +1,762 @@
 const albums = [
-	// Radiohead cluster - Experimental progression
+	// =====================================================
+	// RADIOHEAD
+	// =====================================================
+
 	{
 		title: "OK Computer",
 		artists: ["Radiohead"],
 		format: "LP",
 		releaseDate: new Date("1997-05-21"),
-		labels: ["Parlophone"],
-		genres: ["Alternative Rock", "Art Rock", "Electronic"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/b/b6/Radiohead_-_OK_Computer.png",
+		labels: ["Parlophone", "Capitol Records"],
+		genres: ["Alternative Rock", "Art Rock"],
+		scenes: ["Oxford", "Britpop"],
+		movements: ["Art Rock", "Alternative Rock"],
+		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/b/ba/Radioheadokcomputer.png",
 		coverArtId: "radiohead_ok_computer",
 		personalNote: {
-			content: "Groundbreaking album that defined late 90s alternative rock. A masterpiece.",
-			lastEdited: new Date("2024-09-15T15:30:00Z"),
-			wordCount: 15,
+			content: "A landmark record that predicted modern alienation and digital anxiety.",
+			lastEdited: new Date("2025-01-15T12:00:00Z"),
 		},
 		dimensions: {
-			emotional: ["anxious", "introspective", "contemplative"],
-			sonic: ["experimental", "layered", "atmospheric"],
+			emotional: ["anxious", "contemplative", "melancholic"],
+			sonic: ["layered", "atmospheric", "dense"],
 		},
-		tags: ["classic", "experimental", "concept"],
-		connections: [],
+		tags: ["classic", "essential", "90s"],
 		listeningContext: {
-			firstListen: new Date("1997-06-01T19:00:00Z"),
-			lastListen: new Date("2025-08-20T21:00:00Z"),
-			frequency: "regular",
-			context: "Late-night deep listening sessions.",
+			firstListen: new Date("2012-06-10"),
+			lastListen: new Date("2025-02-10"),
+			frequency: "obsessive",
+			context: "Headphones, night walks.",
 		},
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/radiohead/ok-computer/",
+		rating: 10,
+		favourite: true,
+		connections: [],
 	},
+
 	{
 		title: "Kid A",
 		artists: ["Radiohead"],
 		format: "LP",
 		releaseDate: new Date("2000-10-02"),
 		labels: ["Parlophone"],
-		genres: ["Electronic", "Alternative Rock", "Experimental"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/2/21/Radiohead_-_Kid_A.png",
+		genres: ["Electronic", "Experimental", "Art Rock"],
+		scenes: ["Oxford"],
+		movements: ["IDM", "Experimental Rock"],
 		coverArtId: "radiohead_kid_a",
 		personalNote: {
-			content: "Electronic masterpiece that pushed boundaries even further than OK Computer.",
-			lastEdited: new Date("2024-07-12T12:00:00Z"),
-			wordCount: 14,
+			content: "The sound of a band abandoning expectations and reinventing itself.",
+			lastEdited: new Date("2025-01-18"),
 		},
 		dimensions: {
 			emotional: ["dreamy", "introspective", "peaceful"],
 			sonic: ["experimental", "synthetic", "minimalist"],
 		},
-		tags: ["experimental", "electronic", "progression"],
-		connections: [],
+		tags: ["electronic", "reinvention"],
 		listeningContext: {
-			firstListen: new Date("2000-10-05T20:00:00Z"),
-			lastListen: new Date("2025-09-10T18:30:00Z"),
-			frequency: "occasional",
-			context: "Focus and meditation.",
+			firstListen: new Date("2013-04-20"),
+			lastListen: new Date("2025-03-01"),
+			frequency: "regular",
+			context: "Focus sessions.",
 		},
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/radiohead/kid-a/",
+		rating: 10,
+		favourite: true,
+		connections: [],
 	},
+
 	{
 		title: "In Rainbows",
 		artists: ["Radiohead"],
 		format: "LP",
 		releaseDate: new Date("2007-10-10"),
 		labels: ["XL Recordings"],
-		genres: ["Art Rock", "Electronic", "Alternative Rock"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/5/5f/Radiohead_-_In_Rainbows.png",
+		genres: ["Art Rock", "Alternative Rock"],
+		scenes: ["Oxford"],
+		movements: ["Art Rock"],
 		coverArtId: "radiohead_in_rainbows",
 		personalNote: {
-			content: "Intimate yet lush arrangements showcase Radiohead's mature songwriting.",
-			lastEdited: new Date("2024-06-08T14:15:00Z"),
-			wordCount: 11,
+			content: "Their warmest and most human record. Beautifully understated.",
+			lastEdited: new Date("2025-01-20"),
 		},
 		dimensions: {
-			emotional: ["euphoric", "introspective", "joyful"],
+			emotional: ["euphoric", "joyful", "introspective"],
 			sonic: ["organic", "layered", "polished"],
 		},
-		tags: ["introspective", "mature", "culmination"],
-		connections: [],
+		tags: ["warm", "intimate"],
 		listeningContext: {
-			firstListen: new Date("2007-10-12T21:00:00Z"),
-			lastListen: new Date("2025-10-15T20:00:00Z"),
+			firstListen: new Date("2014-01-10"),
+			lastListen: new Date("2025-02-01"),
 			frequency: "regular",
-			context: "Evening listening, ideal for reflection.",
+			context: "Evening listening.",
 		},
-	},
-	{
-		title: "The Bends",
-		artists: ["Radiohead"],
-		format: "LP",
-		releaseDate: new Date("1995-03-23"),
-		labels: ["Parlophone"],
-		genres: ["Alternative Rock", "Britpop"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/5/5c/Radihead_-_the_bends.png",
-		coverArtId: "radiohead_the_bends",
-		personalNote: {
-			content: "Their earlier, rawer sound before the big experimental shift. Still good.",
-			lastEdited: new Date("2024-10-08T13:30:00Z"),
-			wordCount: 14,
-		},
-		dimensions: {
-			emotional: ["energetic", "anxious", "joyful"],
-			sonic: ["polished", "layered", "organic"],
-		},
-		tags: ["classic", "britpop", "early"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/radiohead/in-rainbows/",
+		rating: 9.5,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("1995-04-05T18:00:00Z"),
-			lastListen: new Date("2025-08-30T19:45:00Z"),
-			frequency: "occasional",
-			context: "Energizing morning sessions.",
-		},
 	},
 
-	// Frank Ocean cluster - R&B/Soul
+	// =====================================================
+	// FRANK OCEAN
+	// =====================================================
+
 	{
 		title: "Channel Orange",
 		artists: ["Frank Ocean"],
 		format: "LP",
 		releaseDate: new Date("2012-07-10"),
-		labels: ["Def Jam", "Odd Future"],
-		genres: ["R&B", "Hip Hop", "Pop"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/e/e6/Channel_Orange.png",
-		coverArtId: "frank_ocean_channel_orange",
+		labels: ["Def Jam"],
+		genres: ["R&B", "Neo Soul"],
+		scenes: ["Los Angeles"],
+		movements: ["Alternative R&B"],
+		coverArtId: "frank_channel_orange",
 		personalNote: {
-			content: "Masterful storytelling with innovative R&B production. Timeless.",
-			lastEdited: new Date("2024-02-10T14:00:00Z"),
-			wordCount: 11,
+			content: "Storytelling, atmosphere and emotional depth in perfect balance.",
+			lastEdited: new Date("2025-01-25"),
 		},
 		dimensions: {
-			emotional: ["melancholic", "introspective", "nostalgic"],
-			sonic: ["polished", "organic", "layered"],
+			emotional: ["nostalgic", "melancholic", "introspective"],
+			sonic: ["organic", "polished", "layered"],
 		},
-		tags: ["classic", "r&b", "concept"],
-		connections: [],
+		tags: ["r&b", "classic"],
 		listeningContext: {
-			firstListen: new Date("2012-07-15T20:00:00Z"),
-			lastListen: new Date("2025-10-08T21:00:00Z"),
+			firstListen: new Date("2014-09-01"),
+			lastListen: new Date("2025-01-10"),
 			frequency: "regular",
-			context: "Deep listening, driving.",
+			context: "Late-night drives.",
 		},
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/frank-ocean/channel-orange/",
+		rating: 9,
+		favourite: true,
+		connections: [],
 	},
+
 	{
 		title: "Blonde",
 		artists: ["Frank Ocean"],
 		format: "LP",
 		releaseDate: new Date("2016-08-20"),
-		labels: ["Boys Don't Cry", "Apple Music"],
-		genres: ["R&B", "Pop", "Electronic"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/a/a7/Frank_Ocean_-_Blonde.png",
-		coverArtId: "frank_ocean_blonde",
+		labels: ["Boys Don't Cry"],
+		genres: ["Alternative R&B", "Art Pop"],
+		scenes: ["Los Angeles"],
+		movements: ["Alternative R&B"],
+		coverArtId: "frank_blonde",
 		personalNote: {
-			content: "Intimate, introspective journey through love, loss, and identity.",
-			lastEdited: new Date("2024-01-25T11:45:00Z"),
-			wordCount: 12,
+			content: "One of the most emotionally vulnerable albums of the century.",
+			lastEdited: new Date("2025-02-01"),
 		},
 		dimensions: {
 			emotional: ["melancholic", "peaceful", "introspective"],
 			sonic: ["minimalist", "spacious", "organic"],
 		},
-		tags: ["introspective", "art", "progression"],
-		connections: [],
+		tags: ["modern-classic"],
 		listeningContext: {
-			firstListen: new Date("2016-08-25T22:00:00Z"),
-			lastListen: new Date("2025-09-05T20:15:00Z"),
-			frequency: "regular",
-			context: "Nighttime contemplation.",
+			firstListen: new Date("2017-01-10"),
+			lastListen: new Date("2025-02-15"),
+			frequency: "obsessive",
+			context: "Night listening.",
 		},
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/frank-ocean/blonde/",
+		rating: 10,
+		favourite: true,
+		connections: [],
 	},
 
-	// Indie/Alternative
+	// =====================================================
+	// BJÖRK
+	// =====================================================
+
 	{
-		title: "After Laughter",
-		artists: ["Paramore"],
+		title: "Homogenic",
+		artists: ["Björk"],
 		format: "LP",
-		releaseDate: new Date("2017-05-12"),
-		labels: ["Fueled by Ramen", "Atlantic"],
-		genres: ["Alternative Rock", "New Wave", "Pop Rock"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/7/7a/Paramore_-_After_Laughter.png",
-		coverArtId: "paramore_after_laughter",
+		releaseDate: new Date("1997-09-22"),
+		labels: ["One Little Independent"],
+		genres: ["Electronic", "Art Pop"],
+		scenes: ["Reykjavik"],
+		movements: ["Art Pop"],
+		coverArtId: "bjork_homogenic",
 		personalNote: {
-			content: "Bright yet bittersweet record that marks Paramore's evolution.",
-			lastEdited: new Date("2024-03-10T10:15:00Z"),
-			wordCount: 11,
+			content: "Volcanic, emotional and futuristic all at the same time.",
+			lastEdited: new Date("2025-01-05"),
 		},
 		dimensions: {
-			emotional: ["melancholic", "nostalgic", "energetic"],
-			sonic: ["polished", "layered", "synthetic"],
+			emotional: ["euphoric", "rebellious", "contemplative"],
+			sonic: ["synthetic", "layered", "atmospheric"],
 		},
-		tags: ["favorite", "summer", "pop-rock"],
+		tags: ["electronic", "art-pop"],
+		releaseCountry: "Iceland",
+		externalUrl: "https://rateyourmusic.com/release/album/bjork/homogenic/",
+		rating: 9.5,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2017-05-13T22:00:00Z"),
-			lastListen: new Date("2025-10-05T14:20:00Z"),
-			frequency: "regular",
-			context: "Perfect for energetic work sessions.",
-		},
 	},
+
 	{
-		title: "Antisocialites",
+		title: "Vespertine",
+		artists: ["Björk"],
+		format: "LP",
+		releaseDate: new Date("2001-08-27"),
+		labels: ["One Little Independent"],
+		genres: ["Art Pop", "Electronic"],
+		scenes: ["Reykjavik"],
+		movements: ["Microhouse"],
+		coverArtId: "bjork_vespertine",
+		personalNote: {
+			content: "A delicate masterpiece built from tiny sounds and huge emotions.",
+			lastEdited: new Date("2025-01-11"),
+		},
+		dimensions: {
+			emotional: ["peaceful", "dreamy", "introspective"],
+			sonic: ["minimalist", "atmospheric", "organic"],
+		},
+		tags: ["winter", "intimate"],
+		releaseCountry: "Iceland",
+		externalUrl: "https://rateyourmusic.com/release/album/bjork/vespertine/",
+		rating: 10,
+		favourite: true,
+		connections: [],
+	},
+
+	// =====================================================
+	// EP
+	// =====================================================
+
+	{
+		title: "EP2",
+		artists: ["FKA twigs"],
+		format: "EP",
+		releaseDate: new Date("2013-09-17"),
+		labels: ["Young"],
+		genres: ["Electronic", "Alternative R&B"],
+		scenes: ["London"],
+		movements: ["Alternative R&B"],
+		coverArtId: "fka_twigs_ep2",
+		personalNote: {
+			content: "Early glimpse of an artist already operating on another level.",
+			lastEdited: new Date("2025-01-15"),
+		},
+		dimensions: {
+			emotional: ["dreamy", "anxious"],
+			sonic: ["experimental", "synthetic", "spacious"],
+		},
+		tags: ["ep", "experimental"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/ep/fka-twigs/ep2/",
+		rating: 8.5,
+		favourite: false,
+		connections: [],
+	},
+	// =====================================================
+	// DREAM POP / INDIE
+	// =====================================================
+
+	{
+		title: "Bloom",
+		artists: ["Beach House"],
+		format: "LP",
+		releaseDate: new Date("2012-05-15"),
+		labels: ["Sub Pop", "Bella Union"],
+		genres: ["Dream Pop"],
+		scenes: ["Baltimore"],
+		movements: ["Dream Pop"],
+		coverArtId: "beach_house_bloom",
+		personalNote: {
+			content: "Weightless melodies that somehow feel both nostalgic and infinite.",
+			lastEdited: new Date("2025-01-18"),
+		},
+		dimensions: {
+			emotional: ["dreamy", "peaceful", "nostalgic"],
+			sonic: ["atmospheric", "layered", "spacious"],
+		},
+		tags: ["dream-pop", "night"],
+		listeningContext: {
+			firstListen: new Date("2017-05-12"),
+			lastListen: new Date("2025-02-01"),
+			frequency: "regular",
+			context: "Late-night walks.",
+		},
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/beach-house/bloom/",
+		rating: 9,
+		favourite: true,
+		connections: [],
+	},
+
+	{
+		title: "Depression Cherry",
+		artists: ["Beach House"],
+		format: "LP",
+		releaseDate: new Date("2015-08-28"),
+		labels: ["Sub Pop"],
+		genres: ["Dream Pop"],
+		scenes: ["Baltimore"],
+		movements: ["Dream Pop"],
+		coverArtId: "beach_house_depression_cherry",
+		personalNote: {
+			content: "A slow-burning record that rewards complete immersion.",
+			lastEdited: new Date("2025-01-12"),
+		},
+		dimensions: {
+			emotional: ["melancholic", "dreamy", "peaceful"],
+			sonic: ["atmospheric", "minimalist", "organic"],
+		},
+		tags: ["dream-pop"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/beach-house/depression-cherry/",
+		rating: 8.5,
+		favourite: false,
+		connections: [],
+	},
+
+	// =====================================================
+	// ALVVAYS
+	// =====================================================
+
+	{
+		title: "Blue Rev",
 		artists: ["Alvvays"],
 		format: "LP",
-		releaseDate: new Date("2017-09-08"),
-		labels: ["Polyvinyl Records"],
-		genres: ["Indie Pop", "Shoegaze", "Dream Pop"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/0/09/Alvvays_-_Antisocialites.png",
-		coverArtId: "alvvays_antisocialites",
+		releaseDate: new Date("2022-10-07"),
+		labels: ["Polyvinyl"],
+		genres: ["Indie Pop", "Shoegaze"],
+		scenes: ["Toronto"],
+		movements: ["Jangle Pop"],
+		coverArtId: "alvvays_blue_rev",
 		personalNote: {
-			content: "Dreamy and melancholic indie pop perfection.",
-			lastEdited: new Date("2024-07-22T15:00:00Z"),
-			wordCount: 8,
+			content: "Hooks everywhere without sacrificing atmosphere or emotion.",
+			lastEdited: new Date("2025-01-20"),
 		},
 		dimensions: {
-			emotional: ["melancholic", "dreamy", "introspective"],
-			sonic: ["spacious", "layered", "atmospheric"],
+			emotional: ["joyful", "nostalgic", "dreamy"],
+			sonic: ["layered", "organic", "dense"],
 		},
-		tags: ["indie-pop", "dreamy", "atmospheric"],
-		connections: [],
+		tags: ["indie", "favorite"],
 		listeningContext: {
-			firstListen: new Date("2017-09-10T20:00:00Z"),
-			lastListen: new Date("2025-10-18T21:15:00Z"),
+			firstListen: new Date("2022-10-08"),
+			lastListen: new Date("2025-02-02"),
 			frequency: "regular",
-			context: "Rainy day comfort music.",
+			context: "Sunny afternoons.",
 		},
+		releaseCountry: "Canada",
+		externalUrl: "https://rateyourmusic.com/release/album/alvvays/blue-rev/",
+		rating: 9.5,
+		favourite: true,
+		connections: [],
 	},
 
-	// Female-led Indie Rock
+	// =====================================================
+	// CLAIRO
+	// =====================================================
+
 	{
-		title: "Punishment",
-		artists: ["Soccer Mommy"],
+		title: "Sling",
+		artists: ["Clairo"],
 		format: "LP",
-		releaseDate: new Date("2018-06-08"),
-		labels: ["Color Theory"],
-		genres: ["Indie Rock", "Lo-Fi", "Experimental"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/c/ca/Soccer_Mommy_-_Punishment.jpg",
-		coverArtId: "soccer_mommy_punishment",
+		releaseDate: new Date("2021-07-16"),
+		labels: ["Fader"],
+		genres: ["Indie Folk", "Bedroom Pop"],
+		scenes: ["Boston"],
+		movements: ["Bedroom Pop"],
+		coverArtId: "clairo_sling",
 		personalNote: {
-			content: "Raw and vulnerable exploration of anxiety and relationships.",
-			lastEdited: new Date("2024-05-20T16:45:00Z"),
-			wordCount: 10,
+			content: "A subtle record that grows richer with every listen.",
+			lastEdited: new Date("2025-01-15"),
 		},
 		dimensions: {
-			emotional: ["anxious", "melancholic", "introspective"],
-			sonic: ["lo-fi", "experimental", "raw"],
+			emotional: ["peaceful", "contemplative", "joyful"],
+			sonic: ["organic", "minimalist", "lo-fi"],
 		},
-		tags: ["indie", "lo-fi", "anxiety"],
+		tags: ["folk", "soft"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/clairo/sling/",
+		rating: 8,
+		favourite: false,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2018-06-15T19:00:00Z"),
-			lastListen: new Date("2025-05-10T20:30:00Z"),
-			frequency: "occasional",
-			context: "Processing emotions through music.",
-		},
 	},
+
+	// =====================================================
+	// LORDE
+	// =====================================================
+
 	{
-		title: "color theory",
-		artists: ["Soccer Mommy"],
+		title: "Melodrama",
+		artists: ["Lorde"],
 		format: "LP",
-		releaseDate: new Date("2020-02-28"),
-		labels: ["Matador Records"],
-		genres: ["Indie Rock", "Experimental", "Noise Rock"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/8/8d/Soccer_Mommy_-_Color_Theory.jpg",
-		coverArtId: "soccer_mommy_color_theory",
+		releaseDate: new Date("2017-06-16"),
+		labels: ["Republic Records"],
+		genres: ["Art Pop", "Electropop"],
+		scenes: ["Auckland"],
+		movements: ["Art Pop"],
+		coverArtId: "lorde_melodrama",
 		personalNote: {
-			content: "Synth-heavy and distorted, but deeply emotional underneath.",
-			lastEdited: new Date("2024-04-18T13:20:00Z"),
-			wordCount: 10,
+			content: "Every emotion feels larger than life without ever losing intimacy.",
+			lastEdited: new Date("2025-01-10"),
 		},
 		dimensions: {
-			emotional: ["anxious", "angry", "introspective"],
-			sonic: ["experimental", "synthetic", "abrasive"],
+			emotional: ["euphoric", "melancholic", "nostalgic"],
+			sonic: ["polished", "layered", "synthetic"],
 		},
-		tags: ["indie", "synth", "progression"],
-		connections: [],
+		tags: ["coming-of-age"],
 		listeningContext: {
-			firstListen: new Date("2020-03-05T18:00:00Z"),
-			lastListen: new Date("2025-08-25T21:45:00Z"),
+			firstListen: new Date("2018-01-01"),
+			lastListen: new Date("2025-02-03"),
 			frequency: "regular",
-			context: "Cathartic listening for dealing with stress.",
+			context: "Night drives.",
 		},
+		releaseCountry: "New Zealand",
+		externalUrl: "https://rateyourmusic.com/release/album/lorde/melodrama/",
+		rating: 10,
+		favourite: true,
+		connections: [],
 	},
 
-	// Experimental/Electronic
+	// =====================================================
+	// PHOEBE BRIDGERS
+	// =====================================================
+
 	{
-		title: "MAGDALENE",
-		artists: ["FKA twigs"],
+		title: "Punisher",
+		artists: ["Phoebe Bridgers"],
 		format: "LP",
-		releaseDate: new Date("2019-11-29"),
-		labels: ["Young Turks"],
-		genres: ["Experimental", "Electronic", "R&B"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/0/05/FKA_Twigs_-_Magdalene.png",
-		coverArtId: "fka_twigs_magdalene",
+		releaseDate: new Date("2020-06-18"),
+		labels: ["Dead Oceans"],
+		genres: ["Indie Folk"],
+		scenes: ["Los Angeles"],
+		movements: ["Indie Folk"],
+		coverArtId: "phoebe_punisher",
 		personalNote: {
-			content: "Ethereal and experimental, exploring reinvention and healing.",
-			lastEdited: new Date("2024-08-10T17:00:00Z"),
-			wordCount: 9,
+			content: "Quiet, devastating songwriting with impeccable arrangements.",
+			lastEdited: new Date("2025-01-18"),
 		},
 		dimensions: {
-			emotional: ["dreamy", "introspective", "euphoric"],
-			sonic: ["experimental", "synthetic", "atmospheric"],
+			emotional: ["melancholic", "contemplative", "peaceful"],
+			sonic: ["organic", "spacious", "minimalist"],
 		},
-		tags: ["experimental", "electronic", "art"],
+		tags: ["sad", "folk"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/phoebe-bridgers/punisher/",
+		rating: 9,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2019-12-01T21:00:00Z"),
-			lastListen: new Date("2025-07-15T20:45:00Z"),
-			frequency: "occasional",
-			context: "Immersive listening, late night.",
-		},
 	},
 
-	// Pop
+	// =====================================================
+	// LIVE (enum)
+	// =====================================================
+
+	{
+		title: "MTV Unplugged in New York",
+		artists: ["Nirvana"],
+		format: "Live",
+		releaseDate: new Date("1994-11-01"),
+		labels: ["DGC Records"],
+		genres: ["Acoustic Rock"],
+		scenes: ["Seattle"],
+		movements: ["Grunge"],
+		coverArtId: "nirvana_unplugged",
+		personalNote: {
+			content: "A live album that surpasses many studio recordings.",
+			lastEdited: new Date("2025-01-15"),
+		},
+		dimensions: {
+			emotional: ["melancholic", "peaceful"],
+			sonic: ["organic", "raw"],
+		},
+		tags: ["live", "classic"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/nirvana/mtv-unplugged-in-new-york/",
+		rating: 10,
+		favourite: true,
+		connections: [],
+	},
+
+	// =====================================================
+	// COMPILATION (enum)
+	// =====================================================
+
+	{
+		title: "Greatest Hits",
+		artists: ["Fleetwood Mac"],
+		format: "Compilation",
+		releaseDate: new Date("1988-11-15"),
+		labels: ["Warner Bros."],
+		genres: ["Rock", "Pop Rock"],
+		scenes: ["California"],
+		movements: ["Soft Rock"],
+		coverArtId: "fleetwood_greatest_hits",
+		personalNote: {
+			content: "An ideal introduction to one of the greatest bands ever.",
+			lastEdited: new Date("2025-01-08"),
+		},
+		dimensions: {
+			emotional: ["joyful", "nostalgic"],
+			sonic: ["polished", "organic"],
+		},
+		tags: ["hits"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/comp/fleetwood-mac/greatest-hits/",
+		rating: 8.5,
+		favourite: false,
+		connections: [],
+	},
+
+	// =====================================================
+	// SILK SONIC
+	// =====================================================
+
+	{
+		title: "An Evening with Silk Sonic",
+		artists: ["Silk Sonic", "Bruno Mars", "Anderson .Paak"],
+		format: "LP",
+		releaseDate: new Date("2021-11-12"),
+		labels: ["Aftermath", "Atlantic"],
+		genres: ["Soul", "R&B", "Funk"],
+		scenes: ["Las Vegas"],
+		movements: ["Neo Soul"],
+		coverArtId: "silk_sonic_evening",
+		personalNote: {
+			content: "Retro production executed with ridiculous precision.",
+			lastEdited: new Date("2025-01-21"),
+		},
+		dimensions: {
+			emotional: ["joyful", "euphoric"],
+			sonic: ["polished", "organic", "layered"],
+		},
+		tags: ["collaboration", "funk"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/silk-sonic/an-evening-with-silk-sonic/",
+		rating: 8.5,
+		favourite: false,
+		connections: [],
+	},
+	// =====================================================
+	// HIP HOP
+	// =====================================================
+
+	{
+		title: "To Pimp a Butterfly",
+		artists: ["Kendrick Lamar"],
+		format: "LP",
+		releaseDate: new Date("2015-03-15"),
+		labels: ["Top Dawg Entertainment", "Aftermath", "Interscope"],
+		genres: ["Hip Hop", "Jazz Rap", "Conscious Hip Hop"],
+		scenes: ["Compton"],
+		movements: ["Jazz Rap"],
+		coverArtId: "kendrick_tpap",
+		personalNote: {
+			content: "A fearless fusion of jazz, funk and hip hop with unmatched lyrical ambition.",
+			lastEdited: new Date("2025-02-01"),
+		},
+		dimensions: {
+			emotional: ["rebellious", "angry", "contemplative"],
+			sonic: ["organic", "dense", "layered"],
+		},
+		tags: ["hip-hop", "masterpiece", "political"],
+		listeningContext: {
+			firstListen: new Date("2016-03-10"),
+			lastListen: new Date("2025-02-10"),
+			frequency: "regular",
+			context: "Focused listening.",
+		},
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/kendrick-lamar/to-pimp-a-butterfly/",
+		rating: 10,
+		favourite: true,
+		connections: [],
+	},
+
+	// =====================================================
+	// BOX SET (enum)
+	// =====================================================
+
+	{
+		title: "Mono",
+		artists: ["The Beatles"],
+		format: "Box Set",
+		releaseDate: new Date("2009-09-09"),
+		labels: ["Apple Records"],
+		genres: ["Rock"],
+		scenes: ["Liverpool"],
+		movements: ["British Invasion"],
+		coverArtId: "beatles_mono_box",
+		personalNote: {
+			content: "The definitive way to experience the Beatles' mono mixes.",
+			lastEdited: new Date("2025-01-11"),
+		},
+		dimensions: {
+			emotional: ["joyful", "nostalgic"],
+			sonic: ["organic", "polished"],
+		},
+		tags: ["box-set", "essential"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/comp/the-beatles/the-beatles-in-mono/",
+		rating: 9,
+		favourite: false,
+		connections: [],
+	},
+
+	// =====================================================
+	// REMIX (enum)
+	// =====================================================
+
+	{
+		title: "Bastards",
+		artists: ["Björk"],
+		format: "Remix",
+		releaseDate: new Date("2012-11-19"),
+		labels: ["One Little Independent"],
+		genres: ["Electronic"],
+		scenes: ["Reykjavik"],
+		movements: ["Experimental Electronic"],
+		coverArtId: "bjork_bastards",
+		personalNote: {
+			content: "Remixes that reinterpret Biophilia from unexpected perspectives.",
+			lastEdited: new Date("2025-01-05"),
+		},
+		dimensions: {
+			emotional: ["dreamy", "contemplative"],
+			sonic: ["synthetic", "experimental", "abrasive"],
+		},
+		tags: ["remix"],
+		releaseCountry: "Iceland",
+		externalUrl: "https://rateyourmusic.com/release/album/bjork/bastards/",
+		rating: 7,
+		favourite: false,
+		connections: [],
+	},
+
+	// =====================================================
+	// INSTRUMENTAL (enum)
+	// =====================================================
+
+	{
+		title: "Selected Ambient Works 85-92",
+		artists: ["Aphex Twin"],
+		format: "Instrumental",
+		releaseDate: new Date("1992-02-12"),
+		labels: ["Apollo Records"],
+		genres: ["Ambient", "IDM"],
+		scenes: ["Cornwall"],
+		movements: ["Ambient Techno"],
+		coverArtId: "aphex_selected",
+		personalNote: {
+			content: "Electronic minimalism that still feels futuristic decades later.",
+			lastEdited: new Date("2025-01-25"),
+		},
+		dimensions: {
+			emotional: ["peaceful", "dreamy"],
+			sonic: ["minimalist", "synthetic", "spacious"],
+		},
+		tags: ["ambient"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/aphex-twin/selected-ambient-works-85_92/",
+		rating: 9.5,
+		favourite: true,
+		connections: [],
+	},
+
+	// =====================================================
+	// MIXTAPE (enum)
+	// =====================================================
+
+	{
+		title: "Acid Rap",
+		artists: ["Chance the Rapper"],
+		format: "Mixtape",
+		releaseDate: new Date("2013-04-30"),
+		labels: [],
+		genres: ["Hip Hop"],
+		scenes: ["Chicago"],
+		movements: ["Alternative Hip Hop"],
+		coverArtId: "chance_acid_rap",
+		personalNote: {
+			content: "A colorful mixtape full of personality and youthful optimism.",
+			lastEdited: new Date("2025-01-30"),
+		},
+		dimensions: {
+			emotional: ["joyful", "energetic"],
+			sonic: ["layered", "organic"],
+		},
+		tags: ["mixtape"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/mixtape/chance-the-rapper/acid-rap/",
+		rating: 8.5,
+		favourite: false,
+		connections: [],
+	},
+
+	// =====================================================
+	// HOLIDAY (enum)
+	// =====================================================
+
+	{
+		title: "Merry Christmas",
+		artists: ["Mariah Carey"],
+		format: "Holiday",
+		releaseDate: new Date("1994-10-28"),
+		labels: ["Columbia Records"],
+		genres: ["Christmas", "Pop"],
+		scenes: ["New York"],
+		movements: ["Contemporary Pop"],
+		coverArtId: "mariah_christmas",
+		personalNote: {
+			content: "An unavoidable Christmas classic with legendary vocals.",
+			lastEdited: new Date("2024-12-25"),
+		},
+		dimensions: {
+			emotional: ["joyful", "peaceful", "nostalgic"],
+			sonic: ["polished", "organic"],
+		},
+		tags: ["holiday"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/mariah-carey/merry-christmas/",
+		rating: 7.5,
+		favourite: false,
+		connections: [],
+	},
+
+	// =====================================================
+	// SOUNDTRACK (enum)
+	// =====================================================
+
+	{
+		title: "Interstellar",
+		artists: ["Hans Zimmer"],
+		format: "Soundtrack",
+		releaseDate: new Date("2014-11-18"),
+		labels: ["WaterTower Music"],
+		genres: ["Film Score"],
+		scenes: ["Hollywood"],
+		movements: ["Modern Classical"],
+		coverArtId: "zimmer_interstellar",
+		personalNote: {
+			content: "Massive, emotional and one of Zimmer's finest achievements.",
+			lastEdited: new Date("2025-01-17"),
+		},
+		dimensions: {
+			emotional: ["contemplative", "peaceful", "euphoric"],
+			sonic: ["atmospheric", "dense", "organic"],
+		},
+		tags: ["soundtrack"],
+		releaseCountry: "United States",
+		externalUrl:
+			"https://rateyourmusic.com/release/album/hans-zimmer/interstellar-original-motion-picture-soundtrack/",
+		rating: 9,
+		favourite: true,
+		connections: [],
+	},
+
+	// =====================================================
+	// REISSUE (enum)
+	// =====================================================
+
 	{
 		title: "1989 (Taylor's Version)",
 		artists: ["Taylor Swift"],
@@ -314,254 +764,218 @@ const albums = [
 		releaseDate: new Date("2023-10-27"),
 		labels: ["Republic Records"],
 		genres: ["Pop", "Synthpop"],
-		coverArtUrl:
-			"https://upload.wikimedia.org/wikipedia/en/e/e8/Taylor_Swift_-_1989_%28Taylor%27s_Version%29.png",
-		coverArtId: "taylor_1989_tv",
+		scenes: ["Nashville"],
+		movements: ["Contemporary Pop"],
+		coverArtId: "1989_taylors_version",
 		personalNote: {
-			content: "Reclaiming her pop era — mature, nostalgic, and immaculate.",
-			lastEdited: new Date("2024-03-05T18:30:00Z"),
-			wordCount: 9,
+			content: "A successful re-recording that adds value beyond nostalgia.",
+			lastEdited: new Date("2025-01-09"),
 		},
 		dimensions: {
-			emotional: ["nostalgic", "joyful", "introspective"],
-			sonic: ["polished", "layered", "synthetic"],
-		},
-		tags: ["re-recording", "pop", "empowerment"],
-		connections: [],
-		listeningContext: {
-			firstListen: new Date("2023-10-27T01:00:00Z"),
-			lastListen: new Date("2025-10-29T18:00:00Z"),
-			frequency: "obsessive",
-			context: "Late-night drives and nostalgia trips.",
-		},
-	},
-	{
-		title: "Poster Girl",
-		artists: ["Zara Larsson"],
-		format: "LP",
-		releaseDate: new Date("2021-03-05"),
-		labels: ["TEN Music Group", "Epic Records"],
-		genres: ["Pop", "Dance", "Electropop"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/d/df/Zara_Larsson_-_Poster_Girl.png",
-		coverArtId: "zara_poster_girl",
-		personalNote: {
-			content: "Zara's confidence shines here — pure pop perfection.",
-			lastEdited: new Date("2024-11-03T17:00:00Z"),
-			wordCount: 8,
-		},
-		dimensions: {
-			emotional: ["euphoric", "joyful"],
+			emotional: ["joyful", "nostalgic"],
 			sonic: ["polished", "synthetic", "layered"],
 		},
-		tags: ["pop", "dancefloor", "modern"],
+		tags: ["reissue"],
+		releaseCountry: "United States",
+		externalUrl: "https://rateyourmusic.com/release/album/taylor-swift/1989-taylors-version/",
+		rating: 8,
+		favourite: false,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2021-03-06T12:00:00Z"),
-			lastListen: new Date("2025-10-10T18:45:00Z"),
-			frequency: "regular",
-			context: "Workout playlist essential.",
-		},
 	},
+	// =====================================================
+	// SOPHIE
+	// =====================================================
+
 	{
-		title: "Camila",
-		artists: ["Camila Cabello"],
+		title: "OIL OF EVERY PEARL'S UN-INSIDES",
+		artists: ["SOPHIE"],
 		format: "LP",
-		releaseDate: new Date("2018-01-12"),
-		labels: ["Epic Records", "SYCO Music"],
-		genres: ["Pop", "Latin Pop", "R&B"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/5/58/Camila_Cabello_-_Camila.png",
-		coverArtId: "camila_cabello_camila",
+		releaseDate: new Date("2018-06-15"),
+		labels: ["Future Classic", "Transgressive"],
+		genres: ["Electronic", "Hyperpop", "Experimental"],
+		scenes: ["London"],
+		movements: ["Hyperpop"],
+		coverArtId: "sophie_oil",
 		personalNote: {
-			content: "A confident solo debut full of warmth and Latin influence.",
-			lastEdited: new Date("2024-08-20T20:00:00Z"),
-			wordCount: 11,
+			content: "A groundbreaking electronic record that completely reshaped pop music.",
+			lastEdited: new Date("2025-01-20"),
 		},
 		dimensions: {
-			emotional: ["euphoric", "energetic"],
-			sonic: ["polished", "organic", "layered"],
+			emotional: ["euphoric", "rebellious", "dreamy"],
+			sonic: ["synthetic", "experimental", "abrasive"],
 		},
-		tags: ["debut", "latin", "pop"],
+		tags: ["hyperpop", "experimental"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/sophie/oil-of-every-pearls-un-insides/",
+		rating: 9.5,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2018-01-12T21:00:00Z"),
-			lastListen: new Date("2025-10-01T20:00:00Z"),
-			frequency: "regular",
-			context: "Evening listening with friends.",
-		},
-	},
-	{
-		title: "Solar Power",
-		artists: ["Lorde"],
-		format: "LP",
-		releaseDate: new Date("2021-08-20"),
-		labels: ["Republic Records"],
-		genres: ["Indie Pop", "Electronic", "Alternative"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/c/c1/Lorde_Solar_Power.png",
-		coverArtId: "lorde_solar_power",
-		personalNote: {
-			content: "Summery and escapist compared to her darker earlier work.",
-			lastEdited: new Date("2024-06-05T16:45:00Z"),
-			wordCount: 10,
-		},
-		dimensions: {
-			emotional: ["euphoric", "peaceful", "joyful"],
-			sonic: ["organic", "polished", "spacious"],
-		},
-		tags: ["indie-pop", "summery", "escapist"],
-		connections: [],
-		listeningContext: {
-			firstListen: new Date("2021-08-25T18:00:00Z"),
-			lastListen: new Date("2025-09-22T19:30:00Z"),
-			frequency: "regular",
-			context: "Summer vibes, beach days.",
-		},
 	},
 
-	// Folk/Lo-Fi
+	// =====================================================
+	// BOARDS OF CANADA
+	// =====================================================
+
 	{
-		title: "Sling",
-		artists: ["Clairo"],
+		title: "Music Has the Right to Children",
+		artists: ["Boards of Canada"],
 		format: "LP",
-		releaseDate: new Date("2021-02-19"),
-		labels: ["Sling Music"],
-		genres: ["Indie Folk", "Lo-Fi", "Experimental"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/9/94/Clairo_-_Sling.jpg",
-		coverArtId: "clairo_sling",
+		releaseDate: new Date("1998-04-20"),
+		labels: ["Warp Records"],
+		genres: ["IDM", "Ambient"],
+		scenes: ["Edinburgh"],
+		movements: ["IDM"],
+		coverArtId: "boc_mhtrtc",
 		personalNote: {
-			content: "Intimate acoustic project proving her range and growth as an artist.",
-			lastEdited: new Date("2024-03-15T14:00:00Z"),
-			wordCount: 11,
+			content: "Nostalgic electronic music unlike anything else ever recorded.",
+			lastEdited: new Date("2025-01-18"),
 		},
 		dimensions: {
-			emotional: ["peaceful", "introspective", "joyful"],
-			sonic: ["lo-fi", "organic", "minimalist"],
+			emotional: ["nostalgic", "dreamy", "peaceful"],
+			sonic: ["lo-fi", "atmospheric", "layered"],
 		},
-		tags: ["folk", "lo-fi", "intimate"],
+		tags: ["idm", "ambient"],
+		releaseCountry: "United Kingdom",
+		externalUrl:
+			"https://rateyourmusic.com/release/album/boards-of-canada/music-has-the-right-to-children/",
+		rating: 10,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2021-02-22T19:00:00Z"),
-			lastListen: new Date("2025-07-30T20:00:00Z"),
-			frequency: "regular",
-			context: "Morning coffee, reading.",
-		},
 	},
 
-	// Raw/Experimental Rock
+	// =====================================================
+	// DAFT PUNK
+	// =====================================================
+
 	{
-		title: "In the Aeroplane Over the Sea",
-		artists: ["Neutral Milk Hotel"],
+		title: "Discovery",
+		artists: ["Daft Punk"],
 		format: "LP",
-		releaseDate: new Date("1998-02-10"),
-		labels: ["Matador Records"],
-		genres: ["Indie Rock", "Experimental", "Folk Rock"],
-		coverArtUrl:
-			"https://upload.wikimedia.org/wikipedia/en/f/f5/Neutral_Milk_Hotel_-_In_the_Aeroplane_Over_the_Sea.png",
-		coverArtId: "nml_aeroplane",
+		releaseDate: new Date("2001-03-12"),
+		labels: ["Virgin Records"],
+		genres: ["French House", "Electronic"],
+		scenes: ["Paris"],
+		movements: ["French House"],
+		coverArtId: "daft_discovery",
 		personalNote: {
-			content: "Raw, chaotic, and deeply moving cult classic that defines indie weirdness.",
-			lastEdited: new Date("2024-11-15T16:20:00Z"),
-			wordCount: 12,
+			content: "Every track is memorable. Pure joy from beginning to end.",
+			lastEdited: new Date("2025-01-30"),
 		},
 		dimensions: {
-			emotional: ["anxious", "introspective", "joyful"],
-			sonic: ["raw", "experimental", "dense"],
+			emotional: ["joyful", "euphoric", "energetic"],
+			sonic: ["polished", "layered", "synthetic"],
 		},
-		tags: ["cult-classic", "experimental", "emotional"],
+		tags: ["dance", "classic"],
+		releaseCountry: "France",
+		externalUrl: "https://rateyourmusic.com/release/album/daft-punk/discovery/",
+		rating: 9.5,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("1998-03-01T19:00:00Z"),
-			lastListen: new Date("2025-10-12T21:30:00Z"),
-			frequency: "occasional",
-			context: "Cathartic listening.",
-		},
 	},
 
-	// Dance/Indie Collaborations
+	// =====================================================
+	// PORTISHEAD
+	// =====================================================
+
 	{
-		title: "Sometimes, Forever",
-		artists: ["Big Red Machine"],
+		title: "Dummy",
+		artists: ["Portishead"],
 		format: "LP",
-		releaseDate: new Date("2022-08-12"),
-		labels: ["Jagjaguwar"],
-		genres: ["Indie Rock", "Electronic", "Art Rock"],
-		coverArtUrl:
-			"https://upload.wikimedia.org/wikipedia/en/9/98/Big_Red_Machine_-_Sometimes_Forever.jpg",
-		coverArtId: "big_red_machine_forever",
+		releaseDate: new Date("1994-08-22"),
+		labels: ["Go! Beat"],
+		genres: ["Trip Hop"],
+		scenes: ["Bristol"],
+		movements: ["Trip Hop"],
+		coverArtId: "portishead_dummy",
 		personalNote: {
-			content: "Collaborative masterpiece blending electronics with raw emotion.",
-			lastEdited: new Date("2024-10-02T11:30:00Z"),
-			wordCount: 10,
+			content: "The definitive trip-hop record. Dark, cinematic and timeless.",
+			lastEdited: new Date("2025-01-11"),
 		},
 		dimensions: {
-			emotional: ["introspective", "contemplative", "peaceful"],
-			sonic: ["experimental", "layered", "atmospheric"],
+			emotional: ["melancholic", "contemplative", "anxious"],
+			sonic: ["atmospheric", "organic", "dense"],
 		},
-		tags: ["indie", "electronic", "collaboration"],
+		tags: ["trip-hop"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/portishead/dummy/",
+		rating: 10,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("2022-08-15T20:00:00Z"),
-			lastListen: new Date("2025-09-30T19:15:00Z"),
-			frequency: "regular",
-			context: "Walking and thinking.",
-		},
 	},
 
-	// Holiday/Special
+	// =====================================================
+	// MASSIVE ATTACK
+	// =====================================================
+
 	{
-		title: "Merry Christmas",
-		artists: ["Mariah Carey"],
-		format: "Holiday",
-		releaseDate: new Date("1994-10-28"),
-		labels: ["Columbia Records"],
-		genres: ["Christmas", "Pop", "R&B"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/f/f3/Mariah_Carey_-_Merry_Christmas.png",
-		coverArtId: "mariah_merry_christmas",
+		title: "Mezzanine",
+		artists: ["Massive Attack"],
+		format: "LP",
+		releaseDate: new Date("1998-04-20"),
+		labels: ["Virgin Records"],
+		genres: ["Trip Hop"],
+		scenes: ["Bristol"],
+		movements: ["Trip Hop"],
+		coverArtId: "massive_mezzanine",
 		personalNote: {
-			content: "Timeless holiday classic — her vocals are unmatched.",
-			lastEdited: new Date("2024-12-24T09:00:00Z"),
-			wordCount: 8,
+			content: "Cold, hypnotic and endlessly influential.",
+			lastEdited: new Date("2025-01-16"),
 		},
 		dimensions: {
-			emotional: ["joyful", "nostalgic", "peaceful"],
-			sonic: ["polished", "organic", "layered"],
+			emotional: ["anxious", "contemplative", "melancholic"],
+			sonic: ["dense", "atmospheric", "layered"],
 		},
-		tags: ["holiday", "classic", "timeless"],
+		tags: ["trip-hop", "dark"],
+		releaseCountry: "United Kingdom",
+		externalUrl: "https://rateyourmusic.com/release/album/massive-attack/mezzanine/",
+		rating: 10,
+		favourite: true,
 		connections: [],
-		listeningContext: {
-			firstListen: new Date("1995-12-01T19:00:00Z"),
-			lastListen: new Date("2024-12-25T10:00:00Z"),
-			frequency: "regular",
-			context: "Played every Christmas morning.",
-		},
 	},
 
-	// Hip-Hop/Contemporary
+	// =====================================================
+	// COCTEAU TWINS
+	// =====================================================
+
 	{
-		title: "For All the Dogs",
-		artists: ["Drake"],
+		title: "Heaven or Las Vegas",
+		artists: ["Cocteau Twins"],
 		format: "LP",
-		releaseDate: new Date("2023-10-06"),
-		labels: ["OVO Sound", "Republic Records"],
-		genres: ["Hip Hop", "R&B", "Pop"],
-		coverArtUrl: "https://upload.wikimedia.org/wikipedia/en/4/4c/Drake_-_For_All_the_Dogs.jpg",
-		coverArtId: "drake_all_the_dogs",
+		genres: ["Dream Pop"],
+		rating: 9,
+		favourite: false,
+	},
+
+	// =====================================================
+	// WEYES BLOOD
+	// =====================================================
+
+	{
+		title: "Titanic Rising",
+		artists: ["Weyes Blood"],
+		format: "LP",
+		releaseDate: new Date("2019-04-05"),
+		genres: ["Baroque Pop", "Dream Pop"],
+		releaseCountry: "United States",
+		rating: 8.5,
+		favourite: false,
+	},
+
+	// =====================================================
+	// THE MICROPHONES
+	// =====================================================
+
+	{
+		title: "The Glow Pt. 2",
+		artists: ["The Microphones"],
+		format: "LP",
+		releaseDate: new Date("2001-09-11"),
+		genres: ["Indie Folk", "Lo-Fi"],
 		personalNote: {
-			content: "Commercial but introspective hip-hop with strong production.",
-			lastEdited: new Date("2024-12-01T12:30:00Z"),
-			wordCount: 9,
+			content: "",
 		},
-		dimensions: {
-			emotional: ["melancholic", "introspective", "nostalgic"],
-			sonic: ["polished", "layered", "organic"],
-		},
-		tags: ["hip-hop", "contemporary", "introspective"],
-		connections: [],
-		listeningContext: {
-			firstListen: new Date("2023-10-10T18:00:00Z"),
-			lastListen: new Date("2025-10-20T19:30:00Z"),
-			frequency: "regular",
-			context: "Casual listening, car drives.",
-		},
+		rating: 9.5,
+		favourite: true,
 	},
 ];
 

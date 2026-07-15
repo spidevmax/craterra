@@ -10,7 +10,7 @@ const { createError } = require("../../utils/createError");
  *
  * Workflow:
  * 1. Queries the Album collection filtering by addedBy: req.user._id.
- * 2. Populates addedBy (name, email) and connections.album (title, artists, releaseDate, coverArtUrl).
+ * 2. Populates connections.album (title, artists, releaseDate, coverArtUrl).
  * 3. Sorts results by createdAt descending (newest first).
  * 4. Returns 200 with an empty array and a specific message if the user has no albums.
  * 5. Returns 200 with the album array otherwise.
@@ -24,7 +24,6 @@ const getMyAlbums = async (req, res, next) => {
 		const userId = req.user._id;
 
 		const myAlbums = await Album.find({ addedBy: userId })
-			.populate("addedBy", "username email")
 			.populate("connections.album", "title artists releaseDate coverArtUrl")
 			.sort({ createdAt: -1 }); // Sort by creation date, newest first
 
@@ -55,9 +54,10 @@ const getMyAlbums = async (req, res, next) => {
 
 const getAlbumById = async (req, res, next) => {
 	try {
-		const album = await Album.findById(req.album._id)
-			.populate("addedBy", "username email")
-			.populate("connections.album", "title artists releaseDate coverArtUrl");
+		const album = await Album.findById(req.album._id).populate(
+			"connections.album",
+			"title artists releaseDate coverArtUrl",
+		);
 
 		return sendResponse(res, 200, true, "Album fetched successfully", album);
 	} catch (error) {

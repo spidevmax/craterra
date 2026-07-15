@@ -8,11 +8,19 @@ const HEADERS = [
 	"Label",
 	"Main Genre",
 	"Tags",
+	"Scenes",
+	"Movements",
+	"Emotional Dimensions",
+	"Sonic Dimensions",
 	"Release Country",
 	"Cover",
 	"URL",
 	"Rating",
 	"Favourite",
+	"First Listen",
+	"Last Listen",
+	"Listening Frequency",
+	"Listening Context",
 	"Personal Note",
 ];
 
@@ -40,11 +48,27 @@ const albumToRow = (album) => [
 	escapeCSV(album.labels.join(", ")),
 	escapeCSV(album.genres.join(", ")),
 	escapeCSV(album.tags.join(", ")),
+	escapeCSV(album.scenes.join(", ")),
+	escapeCSV(album.movements.join(", ")),
+	escapeCSV(album.dimensions?.emotional?.join(", ") || ""),
+	escapeCSV(album.dimensions?.sonic?.join(", ") || ""),
 	escapeCSV(album.releaseCountry || ""),
 	escapeCSV(album.coverArtUrl || ""),
 	escapeCSV(album.externalUrl || ""),
 	escapeCSV(album.rating !== undefined && album.rating !== null ? album.rating : ""),
 	escapeCSV(album.favourite ? "Yes" : "No"),
+	escapeCSV(
+		album.listeningContext?.firstListen
+			? album.listeningContext.firstListen.toISOString().split("T")[0]
+			: "",
+	),
+	escapeCSV(
+		album.listeningContext?.lastListen
+			? album.listeningContext.lastListen.toISOString().split("T")[0]
+			: "",
+	),
+	escapeCSV(album.listeningContext?.frequency || ""),
+	escapeCSV(album.listeningContext?.context || ""),
 	escapeCSV(album.personalNote?.content || ""),
 ];
 
@@ -60,8 +84,14 @@ const albumToRow = (album) => [
  *
  * Notes:
  * - No external library needed — CSV is built manually with proper escaping.
- * - The column names match the Notion import format so the file can be
- *   re-imported or opened in Notion/Excel/Sheets without modification.
+ * - The column names for the core fields (Name, Artist, Release Date, Format,
+ *   Label, Main Genre, Release Country, Cover, URL, Rating, Favourite) match
+ *   the Notion import format, so re-importing this file keeps those fields intact.
+ * - Scenes and Movements round-trip correctly: exported here and read back
+ *   in by importAlbums via the "Scene"/"Movements" CSV columns.
+ * - Dimensions and Listening Context are Craterra-specific fields with no
+ *   Notion equivalent — included here to avoid data loss on export, but
+ *   importAlbums does not currently read them back in.
  */
 const exportAlbums = async (req, res, next) => {
 	try {

@@ -23,7 +23,7 @@ const { createError } = require("../../utils/createError");
  * - Regular users cannot access this route.
  */
 
-const getAllAlbums = async (_req, res, next) => {
+const getAllAlbums = async (req, res, next) => {
 	try {
 		const albums = await Album.find().populate("addedBy", "name email");
 		return sendResponse(res, 200, true, "Albums fetched successfully", albums);
@@ -63,10 +63,7 @@ const deleteAlbum = async (req, res, next) => {
 		}
 
 		await Album.findByIdAndDelete(id);
-		await Album.updateMany(
-			{ "connections.album": id },
-			{ $pull: { connections: { album: id } } },
-		);
+		await Album.updateMany({ "connections.album": id }, { $pull: { connections: { album: id } } });
 
 		return sendResponse(res, 200, true, "Album deleted successfully", album);
 	} catch (error) {
@@ -91,7 +88,7 @@ const deleteAlbum = async (req, res, next) => {
  * - Useful for admin panels, moderation tools, or analytics dashboards.
  */
 
-const getAllUsers = async (_req, res, next) => {
+const getAllUsers = async (req, res, next) => {
 	try {
 		const users = await User.find().select("-password -profileImageId");
 		return sendResponse(res, 200, true, "Users fetched successfully", users);
@@ -135,13 +132,7 @@ const deleteUser = async (req, res, next) => {
 			await deleteImgCloudinary(userDeleted.profileImageId);
 		}
 
-		return sendResponse(
-			res,
-			200,
-			true,
-			"User deleted successfully",
-			userDeleted,
-		);
+		return sendResponse(res, 200, true, "User deleted successfully", userDeleted);
 	} catch (error) {
 		next(error);
 	}

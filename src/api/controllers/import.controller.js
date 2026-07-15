@@ -2,7 +2,19 @@ const { parse } = require("csv-parse/sync");
 const Album = require("../models/album.model");
 const { sendResponse } = require("../../utils/sendResponse");
 
-const VALID_FORMATS = ["LP", "EP", "Reissue", "Live", "Compilation", "Box Set", "Holiday", "Instrumental", "Remix", "Soundtrack", "Mixtape"];
+const VALID_FORMATS = [
+	"LP",
+	"EP",
+	"Reissue",
+	"Live",
+	"Compilation",
+	"Box Set",
+	"Holiday",
+	"Instrumental",
+	"Remix",
+	"Soundtrack",
+	"Mixtape",
+];
 
 /**
  * Splits a Notion multi-select cell value into an array.
@@ -10,7 +22,10 @@ const VALID_FORMATS = ["LP", "EP", "Reissue", "Live", "Compilation", "Box Set", 
  */
 const splitMultiSelect = (value) => {
 	if (!value || value.trim() === "" || value.trim().toLowerCase() === "empty") return [];
-	return value.split(",").map((s) => s.trim()).filter(Boolean);
+	return value
+		.split(",")
+		.map((s) => s.trim())
+		.filter(Boolean);
 };
 
 /**
@@ -34,11 +49,11 @@ const parseDate = (value) => {
 	const ddmmyyyy = str.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
 	if (ddmmyyyy) {
 		const d = new Date(`${ddmmyyyy[3]}-${ddmmyyyy[2]}-${ddmmyyyy[1]}`);
-		return isNaN(d.getTime()) ? null : d;
+		return Number.isNaN(d.getTime()) ? null : d;
 	}
 	// YYYY-MM-DD fallback
 	const d = new Date(str);
-	return isNaN(d.getTime()) ? null : d;
+	return Number.isNaN(d.getTime()) ? null : d;
 };
 
 /**
@@ -49,14 +64,12 @@ const mapRowToAlbum = (row) => {
 	const artistRaw = row["Artist"] || row["artist"] || "";
 	const artistName = parseNotionRelation(artistRaw);
 
-	const genres = [
-		...splitMultiSelect(row["Main Genre"]),
-		...splitMultiSelect(row["Subgenre"]),
-	];
+	const genres = [...splitMultiSelect(row["Main Genre"]), ...splitMultiSelect(row["Subgenre"])];
+
+	const scenes = splitMultiSelect(row["Scene"]);
+	const movements = splitMultiSelect(row["Movements"]);
 
 	const tags = [
-		...splitMultiSelect(row["Scene"]),
-		...splitMultiSelect(row["Movements"]),
 		...(row["Release Status"]?.trim() && row["Release Status"].trim().toLowerCase() !== "empty"
 			? [row["Release Status"].trim()]
 			: []),
@@ -73,11 +86,13 @@ const mapRowToAlbum = (row) => {
 		releaseDate: parseDate(row["Release Date"]),
 		labels: splitMultiSelect(row["Label"]),
 		genres,
+		scenes,
+		movements,
 		tags,
 		// Cover is a relative Notion path — not a usable URL, skip it
 		releaseCountry: row["Release Country"]?.trim() || undefined,
 		externalUrl: row["URL"]?.trim() || undefined,
-		rating: ratingRaw && !isNaN(Number(ratingRaw)) ? Number(ratingRaw) : undefined,
+		rating: ratingRaw && !Number.isNaN(Number(ratingRaw)) ? Number(ratingRaw) : undefined,
 		favourite: favouriteRaw === "yes" || favouriteRaw === "true" || favouriteRaw === "checked",
 	};
 };
@@ -97,6 +112,13 @@ const mapRowToAlbum = (row) => {
  * 4. Skips albums already in the user's collection (same title + artist)
  * 5. Bulk inserts valid albums
  * 6. Returns a summary: imported, skipped, errors
+ *
+ * Notes:
+ * - "Scene" and "Movements" columns map to the dedicated `scenes`/`movements`
+ *   Album fields, not to `tags`. Only "Release Status" (no dedicated field
+ *   in the schema) still falls back into `tags`.
+ * - dimensions and listeningContext are not populated on import — Notion has
+ *   no equivalent columns for them; they remain unset until edited manually.
  */
 const importAlbums = async (req, res, next) => {
 	try {

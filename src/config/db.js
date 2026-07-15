@@ -43,7 +43,7 @@ const mongoose = require("mongoose");
 const connectDB = async () => {
 	try {
 		await mongoose.connect(process.env.DB_URL);
-		console.log("MongoDB connected successfully");
+		console.log("✅ MongoDB connected successfully");
 	} catch (error) {
 		console.log("Error connecting database: ", error.message);
 	}
@@ -52,9 +52,9 @@ const connectDB = async () => {
 const disconnectDB = async () => {
 	try {
 		await mongoose.disconnect();
-		console.log("MongoDB disconnected successfully");
+		console.log("🔌 MongoDB disconnected successfully");
 	} catch (error) {
-		console.log("Error disconnecting database: ", error.message);
+		console.log("❌ Error disconnecting database: ", error.message);
 	}
 };
 
