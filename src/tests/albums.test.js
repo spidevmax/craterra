@@ -1,5 +1,4 @@
 const request = require("supertest");
-const { parse } = require("csv-parse/sync");
 const app = require("../../app");
 const { createUser, albumFactory, createAlbum } = require("./helpers");
 
@@ -333,59 +332,6 @@ describe("Albums — POST /import", () => {
 			});
 
 		expect(res.status).toBe(400);
-	});
-});
-
-describe("Albums — GET /export", () => {
-	it("returns 401 without token", async () => {
-		const res = await request(app).get("/api/v1/albums/export");
-		expect(res.status).toBe(401);
-	});
-
-	it("exports headers when user has no albums → 200", async () => {
-		const { token } = await createUser();
-		const res = await request(app)
-			.get("/api/v1/albums/export")
-			.set("Authorization", `Bearer ${token}`);
-
-		expect(res.status).toBe(200);
-		expect(res.headers["content-type"]).toContain("text/csv");
-		expect(res.text.replace(/^\uFEFF/, "")).toBe(
-			"Name,Artist,Release Date,Format,Label,Main Genre,Tags,Release Country,Cover,URL,Rating,Favourite,Personal Note",
-		);
-	});
-
-	it("exports albums as parseable CSV with escaped fields → 200", async () => {
-		const { token } = await createUser();
-		await createAlbum(token, {
-			title: 'Great, "Best" Album',
-			artists: ["Artist A", "Artist B"],
-			labels: ["Label A", "Label B"],
-			genres: ["Rock", "Pop"],
-			tags: ["tag-one"],
-			releaseCountry: "UK",
-			externalUrl: "https://example.com/album",
-			rating: 8.5,
-			favourite: true,
-			personalNote: { content: 'Great album, "best" of the year\nreally' },
-		});
-
-		const res = await request(app)
-			.get("/api/v1/albums/export")
-			.set("Authorization", `Bearer ${token}`);
-
-		expect(res.status).toBe(200);
-		expect(res.headers["content-type"]).toContain("text/csv");
-
-		const rows = parse(res.text.replace(/^\uFEFF/, ""), {
-			columns: true,
-			skip_empty_lines: true,
-		});
-
-		expect(rows).toHaveLength(1);
-		expect(rows[0].Name).toBe('Great, "Best" Album');
-		expect(rows[0].Artist).toBe("Artist A, Artist B");
-		expect(rows[0]["Personal Note"]).toBe('Great album, "best" of the year\nreally');
 	});
 });
 

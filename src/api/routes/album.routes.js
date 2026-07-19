@@ -537,10 +537,14 @@ albumsRouter.post("/import", handleCSVUpload, importAlbums); // → POST /api/v1
  *     summary: Export albums to CSV
  *     description: |
  *       Downloads all albums of the authenticated user as a CSV file.
- *       Column names match the Notion import format, so the file can be
- *       re-imported into Notion or this app without modification.
+ *       The core column names match the Notion import format, so those fields
+ *       survive a re-import into Notion or this app without modification.
+ *       Dimensions and Listening Context are Craterra-specific and have no
+ *       Notion equivalent — they are exported to avoid data loss.
  *       Columns: Name, Artist, Release Date, Format, Label, Main Genre,
- *       Tags, Release Country, Cover, URL, Rating, Favourite, Personal Note.
+ *       Tags, Scenes, Movements, Emotional Dimensions, Sonic Dimensions,
+ *       Release Country, Cover, URL, Rating, Favourite, First Listen,
+ *       Last Listen, Listening Frequency, Listening Context, Personal Note.
  *     tags:
  *       - Albums
  *     security:

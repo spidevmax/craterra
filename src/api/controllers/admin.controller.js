@@ -64,6 +64,7 @@ const deleteAlbum = async (req, res, next) => {
 
 		await Album.findByIdAndDelete(id);
 		await Album.updateMany({ "connections.album": id }, { $pull: { connections: { album: id } } });
+		await User.updateMany({ favorites: id }, { $pull: { favorites: id } });
 
 		return sendResponse(res, 200, true, "Album deleted successfully", album);
 	} catch (error) {

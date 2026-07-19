@@ -1,4 +1,5 @@
 const Album = require("../models/album.model");
+const User = require("../models/user.model");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
 const { sendResponse } = require("../../utils/sendResponse");
 const { createError } = require("../../utils/createError");
@@ -217,6 +218,7 @@ const deleteAlbum = async (req, res, next) => {
 			{ "connections.album": req.album._id },
 			{ $pull: { connections: { album: req.album._id } } },
 		);
+		await User.updateMany({ favorites: req.album._id }, { $pull: { favorites: req.album._id } });
 
 		return sendResponse(res, 200, true, "Album deleted successfully", req.album);
 	} catch (error) {

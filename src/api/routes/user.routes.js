@@ -3,6 +3,9 @@ const {
 	updateMyProfile,
 	deleteMyAccount,
 	changeMyPassword,
+	getFavorites,
+	addFavorite,
+	removeFavorite,
 } = require("../controllers/user.controller");
 const { uploadUserImage } = require("../../middlewares/upload/user.upload");
 const { isAuth } = require("../../middlewares/auth.middleware");
@@ -227,5 +230,142 @@ usersRouter.put(
  *         description: Server error
  */
 usersRouter.delete("/me", deleteMyAccount); // → DELETE /api/v1/users/me
+
+/**
+ * @swagger
+ * /api/v1/users/me/favorites:
+ *   get:
+ *     summary: Get my favorite albums
+ *     description: Returns the authenticated user's favorite albums, populated with title, artists and cover art.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Favorites retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Favorites fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Album'
+ *       401:
+ *         description: No token or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ */
+usersRouter.get("/me/favorites", getFavorites); // → GET /api/v1/users/me/favorites
+
+/**
+ * @swagger
+ * /api/v1/users/me/favorites/{albumId}:
+ *   post:
+ *     summary: Add album to favorites
+ *     description: Adds an album to the authenticated user's favorites. Adding the same album twice is a no-op (no duplicates).
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: albumId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Album ID to add to favorites
+ *         example: 507f1f77bcf86cd799439011
+ *     responses:
+ *       200:
+ *         description: Album added to favorites
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Album added to favorites
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     example: 507f1f77bcf86cd799439011
+ *       401:
+ *         description: No token or invalid token
+ *       404:
+ *         description: Album not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ */
+usersRouter.post("/me/favorites/:albumId", addFavorite); // → POST /api/v1/users/me/favorites/:albumId
+
+/**
+ * @swagger
+ * /api/v1/users/me/favorites/{albumId}:
+ *   delete:
+ *     summary: Remove album from favorites
+ *     description: Removes an album from the authenticated user's favorites.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: albumId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Album ID to remove from favorites
+ *         example: 507f1f77bcf86cd799439011
+ *     responses:
+ *       200:
+ *         description: Album removed from favorites
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Album removed from favorites
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     example: 507f1f77bcf86cd799439011
+ *       401:
+ *         description: No token or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Server error
+ */
+usersRouter.delete("/me/favorites/:albumId", removeFavorite); // → DELETE /api/v1/users/me/favorites/:albumId
 
 module.exports = usersRouter;

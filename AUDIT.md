@@ -5,6 +5,24 @@ Hallazgos priorizados: **P0** (bug real / integridad de datos) → **P1** (gap d
 
 Cada bloque está listo para copiar/pegar a Codex tal cual.
 
+## Estado
+
+- [ ] **P0-3 (BLOQUEANTE DE ENTREGA)** — `.env` y `seeds` están en `.gitignore`. El enunciado exige subir el `.env` real (no un `.env.example`) y el script de seeder (`src/utils/seeds/seedDB.js`, referenciado en package.json pero ausente del repo por estar ignorado). Sin esto, el corrector no puede levantar el proyecto ni ver el seeder. Acción: quitar ambas líneas del `.gitignore` y comprometer los archivos reales.
+- [ ] **P0-4** — Falta array de datos de otra colección en el modelo `User` (requisito explícito del enunciado). Decisión: `favorites: [ObjectId ref Album]`. Especificación completa en la sección P0-4 más abajo.
+- [x] P0-1 — Conexiones huérfanas al borrar un álbum (fijo en album.controller.js y admin.controller.js)
+- [x] P0-2 — csv.upload.js devolvía 500 en vez de 400 (fijo, + wrapper handleCSVUpload para errores de Multer)
+- [x] P1-1 — Tests de import.controller.js (import.test.js creado)
+- [x] P1-1b — Bug encontrado durante P1-1: duplicate check ignoraba `artists`, solo miraba `title` (fijo, ahora usa $all/$size igual que postAlbum; artist-less rows caen a título-solo y se marcan skipped por diseño, ver código)
+- [x] P1-2 — Tests de export.controller.js (export.test.js creado, incluye reparseo real del CSV para el test de escaping)
+- [x] P1-2b — Desfase de "13 columnas" (Swagger de album.routes.js actualizado a las 21 reales; bloque duplicado/desactualizado eliminado de albums.test.js). El "13 columnas" en el enunciado original de este ticket queda como registro histórico a propósito, no se corrige retroactivamente.
+- [ ] (Backlog, Día 6 — regresión) Biome falla en albums.test.js (~línea 237, test del grafo) por formato, preexistente y sin relación con export. Se arregla con `npx biome check --write`.
+- [x] P1-3 — **No aplica, cerrado sin implementar.** El enunciado dice explícitamente que un admin puede eliminar/cambiar el rol de "cualquier usuario" sin excepción. Añadir un guard de auto-protección contradiría el requisito literal. Ver sección P1-3 más abajo para el razonamiento completo.
+- [ ] P2-1 — README sin tablas de Admin/Users
+- [ ] P2-2 — Falta `.env.example` (nota: distinto de P0-3, que exige el `.env` real; puede hacerse igualmente por buena práctica de cara a un uso futuro fuera del contexto escolar)
+- [ ] P2-3 — Sincronizar VALIDATION_GUIDE.md
+- [ ] (Backlog, post-entrega) Rating no numérico se descarta en silencio en import — considerar mover a `errors`
+- [ ] (Backlog, post-entrega) Matching de artists en duplicados es exacto por $size — créditos inconsistentes entre exports de Notion pueden seguir produciendo cuasi-duplicados; heredado de postAlbum, no introducido por este fix
+
 ---
 
 ## P0-1 — Conexiones huérfanas al borrar un álbum
@@ -64,6 +82,54 @@ Y sustituir `uploadCSV.single("file")` por `handleCSVUpload` en la ruta `POST /a
 - Test: subir un CSV >5MB → 400 con mensaje sobre el límite de tamaño.
 
 **No tocar:** `limits.fileSize` (5MB se mantiene), ni el resto de `import.controller.js`.
+
+---
+
+## P0-4 — Falta array de datos de otra colección en el modelo `User`
+
+**Contexto:** `src/api/models/user.model.js`, `src/api/controllers/user.controller.js`, `src/api/routes/user.routes.js`. También `src/api/controllers/album.controller.js` y `src/api/controllers/admin.controller.js` (función `deleteAlbum` en ambos, ya tienen el `$pull` de P0-1).
+
+**Problema:** El enunciado del proyecto exige explícitamente que el modelo de usuarios incluya un array de datos procedentes de otra colección, y hoy `userSchema` no tiene ninguno. La relación con `Album` es solo inversa (`Album.addedBy → User`).
+
+**Cambio requerido:**
+
+1. En `user.model.js`, añadir al schema:
+```js
+favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Album" }],
+```
+
+2. En `user.controller.js`, añadir dos funciones:
+```js
+// POST /users/me/favorites/:albumId
+const addFavorite = async (req, res, next) => {
+    // Verificar que el álbum existe (404 si no) antes de añadirlo.
+    // Usar $addToSet (no push) para que Mongo garantice la no-duplicación atómicamente.
+    // await User.findByIdAndUpdate(req.user._id, { $addToSet: { favorites: albumId } })
+};
+
+// DELETE /users/me/favorites/:albumId
+const removeFavorite = async (req, res, next) => {
+    // await User.findByIdAndUpdate(req.user._id, { $pull: { favorites: albumId } })
+};
+```
+Añadir también un `getFavorites` (GET /users/me/favorites) que devuelva el array poblado (`.populate("favorites", "title artists coverArtUrl")`), para que tenga utilidad real desde el frontend más adelante.
+
+3. En `user.routes.js`, montar las 3 rutas bajo el router de users ya existente (mismo middleware `isAuth` que el resto de rutas de user), y documentarlas en Swagger siguiendo el mismo patrón que ya usan las rutas de connections en `album.routes.js`.
+
+4. **Extender la limpieza de huérfanos de P0-1** para que también cubra `favorites`: en `deleteAlbum` (tanto en `album.controller.js` como en `admin.controller.js`), junto al `Album.updateMany` que ya limpia `connections`, añadir:
+```js
+await User.updateMany({ favorites: id }, { $pull: { favorites: id } });
+```
+
+**Criterio de aceptación:**
+- Test: añadir un álbum a favoritos → aparece en `GET /users/me/favorites`.
+- Test: añadir el mismo álbum dos veces → sigue apareciendo una sola vez (verifica el array real en la base de datos, no solo la respuesta).
+- Test: añadir un álbum inexistente → 404.
+- Test: quitar un álbum de favoritos → desaparece del array.
+- Test: sin auth en cualquiera de las 3 rutas → 401.
+- Test: borrar un álbum que está en favoritos de uno o más usuarios → tras el borrado, `GET /users/me/favorites` de esos usuarios ya no lo incluye (reutiliza el patrón de test que ya escribiste para P0-1, pero comprobando `User.favorites` en vez de `Album.connections`).
+
+**No tocar:** el campo `album.favourite` (booleano, ya existente) — es un concepto distinto y no debe fusionarse ni eliminarse.
 
 ---
 

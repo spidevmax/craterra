@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Album = require("../models/album.model");
 const bcrypt = require("bcrypt");
 const { deleteImgCloudinary } = require("../../utils/deleteImage");
 const { sendResponse } = require("../../utils/sendResponse");
@@ -192,9 +193,104 @@ const deleteMyAccount = async (req, res, next) => {
 	}
 };
 
+/**
+ * Controller: getFavorites
+ * ------------------------
+ * Returns the authenticated user's favorite albums, populated with a small
+ * subset of album fields useful for a frontend list view.
+ *
+ * Workflow:
+ * 1. Uses req.user._id (set by isAuth) to query the database.
+ * 2. Populates the favorites array (title, artists, coverArtUrl).
+ * 3. Returns 200 with the populated favorites array.
+ *
+ * Error Handling:
+ * - 404 if the user no longer exists in the database.
+ */
+const getFavorites = async (req, res, next) => {
+	try {
+		const user = await User.findById(req.user._id).populate(
+			"favorites",
+			"title artists coverArtUrl",
+		);
+		if (!user) {
+			throw createError(404, "User not found");
+		}
+
+		return sendResponse(res, 200, true, "Favorites fetched successfully", user.favorites);
+	} catch (error) {
+		next(error);
+	}
+};
+
+/**
+ * Controller: addFavorite
+ * -----------------------
+ * Adds an album to the authenticated user's favorites.
+ *
+ * Workflow:
+ * 1. Verifies the album exists → 404 if not.
+ * 2. Uses $addToSet so Mongo guarantees no duplicates atomically (no manual check).
+ * 3. Returns 200 with the updated favorites array.
+ *
+ * Error Handling:
+ * - 404 if the album does not exist.
+ */
+const addFavorite = async (req, res, next) => {
+	try {
+		const { albumId } = req.params;
+
+		const album = await Album.findById(albumId);
+		if (!album) {
+			throw createError(404, "Album not found");
+		}
+
+		const user = await User.findByIdAndUpdate(
+			req.user._id,
+			{ $addToSet: { favorites: albumId } },
+			{ new: true },
+		);
+
+		return sendResponse(res, 200, true, "Album added to favorites", user.favorites);
+	} catch (error) {
+		next(error);
+	}
+};
+
+/**
+ * Controller: removeFavorite
+ * --------------------------
+ * Removes an album from the authenticated user's favorites.
+ *
+ * Workflow:
+ * 1. Uses $pull to remove the album from the favorites array.
+ * 2. Returns 200 with the updated favorites array.
+ *
+ * Notes:
+ * - Idempotent: removing an album that is not in favorites still returns 200.
+ */
+const removeFavorite = async (req, res, next) => {
+	try {
+		const { albumId } = req.params;
+
+		const user = await User.findByIdAndUpdate(
+			req.user._id,
+			{ $pull: { favorites: albumId } },
+			{ new: true },
+		);
+
+		return sendResponse(res, 200, true, "Album removed from favorites", user.favorites);
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	getMyProfile,
 	updateMyProfile,
 	changeMyPassword,
 	deleteMyAccount,
+	getFavorites,
+	addFavorite,
+	removeFavorite,
 };

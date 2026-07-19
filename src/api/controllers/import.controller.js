@@ -162,10 +162,28 @@ const importAlbums = async (req, res, next) => {
 
 			// Duplicate check (escape special regex chars in title)
 			const normalizedTitle = mapped.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-			const exists = await Album.findOne({
+			const duplicateQuery = {
 				addedBy,
 				title: { $regex: new RegExp(`^${normalizedTitle}$`, "i") },
-			});
+			};
+
+			// Match on title + exact artist list, same as postAlbum, so that distinct
+			// albums sharing a title (self-titled records, common names) are not
+			// collapsed into one.
+			//
+			// When the CSV has no parseable Artist we fall back to a title-only match
+			// instead of querying `artists: []`. An unparseable artist column means the
+			// artist is unknown, not that the album has none — matching on [] would let
+			// a second copy of an album already in the collection slip through, and
+			// re-importing the same export would duplicate every artist-less row. The
+			// trade-off is that an artist-less row is skipped when any album shares its
+			// title; that is the safer direction for an import (skipping is reported and
+			// reversible, a duplicate is silent).
+			if (mapped.artists.length) {
+				duplicateQuery.artists = { $all: mapped.artists, $size: mapped.artists.length };
+			}
+
+			const exists = await Album.findOne(duplicateQuery);
 
 			if (exists) {
 				skipped.push({ row: rowNum, title: mapped.title, reason: "Already exists in your collection" });
