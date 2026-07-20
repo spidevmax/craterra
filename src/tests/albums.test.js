@@ -10,9 +10,7 @@ describe("Albums — GET /", () => {
 
 	it("returns empty list for new user → 200", async () => {
 		const { token } = await createUser();
-		const res = await request(app)
-			.get("/api/v1/albums")
-			.set("Authorization", `Bearer ${token}`);
+		const res = await request(app).get("/api/v1/albums").set("Authorization", `Bearer ${token}`);
 		expect(res.status).toBe(200);
 		expect(res.body.data).toEqual([]);
 	});
@@ -234,9 +232,7 @@ describe("Albums — GET /graph/all", () => {
 			.set("Authorization", `Bearer ${token}`)
 			.send({ targetAlbumId: albumB._id, type: "influences" });
 
-		await request(app)
-			.delete(`/api/v1/albums/${albumB._id}`)
-			.set("Authorization", `Bearer ${token}`);
+		await request(app).delete(`/api/v1/albums/${albumB._id}`).set("Authorization", `Bearer ${token}`);
 
 		const graphRes = await request(app)
 			.get("/api/v1/albums/graph/all")
