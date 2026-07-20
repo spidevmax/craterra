@@ -302,6 +302,36 @@
 			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
 			"body": {}
 		},
+		{
+			"_id": "req_get_favorites",
+			"_type": "request",
+			"name": "Get my favorites",
+			"parentId": "fld_users",
+			"method": "GET",
+			"url": "{{ _.base_url }}/users/me/favorites",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_add_favorite",
+			"_type": "request",
+			"name": "Add album to favorites",
+			"parentId": "fld_users",
+			"method": "POST",
+			"url": "{{ _.base_url }}/users/me/favorites/{{ _.albumId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
+		{
+			"_id": "req_remove_favorite",
+			"_type": "request",
+			"name": "Remove album from favorites",
+			"parentId": "fld_users",
+			"method": "DELETE",
+			"url": "{{ _.base_url }}/users/me/favorites/{{ _.albumId }}",
+			"headers": [{ "name": "Authorization", "value": "Bearer {{ _.token }}" }],
+			"body": {}
+		},
 
 		{
 			"_id": "req_admin_albums",

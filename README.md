@@ -212,6 +212,30 @@ Authorization: Bearer <token>
 | PUT | `/api/v1/albums/:id/connections/:connectionId` | Update connection |
 | DELETE | `/api/v1/albums/:id/connections/:connectionId` | Remove connection |
 
+### Users
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/users/me` | Get own profile |
+| PUT | `/api/v1/users/me` | Update own profile (name, email, image — not role/password) |
+| PUT | `/api/v1/users/change-password` | Change own password |
+| DELETE | `/api/v1/users/me` | Delete own account |
+| GET | `/api/v1/users/me/favorites` | Get own favorite albums (populated) |
+| POST | `/api/v1/users/me/favorites/:albumId` | Add an album to favorites |
+| DELETE | `/api/v1/users/me/favorites/:albumId` | Remove an album from favorites |
+
+### Admin
+
+Requires an `admin` role.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/admin/albums` | Get all albums (any owner) |
+| GET | `/api/v1/admin/users` | Get all users |
+| DELETE | `/api/v1/admin/albums/:id` | Delete any album |
+| DELETE | `/api/v1/admin/users/:id` | Delete any user |
+| PATCH | `/api/v1/admin/users/:id/role` | Change a user's role |
+
 ## Importing from Notion
 
 1. In Notion, open your albums database

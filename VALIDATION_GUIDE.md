@@ -29,9 +29,10 @@ Request → Validations (express-validator) → handleValidationErrors (middlewa
 #### POST `/register`
 **Validaciones:**
 - `name`: Requerido, 2-100 caracteres
-- `email`: Requerido, debe ser un email válido
+- `email`: Requerido, debe ser un email válido (se normaliza a minúsculas)
 - `password`: Requerido, mínimo 8 caracteres
-- `profileImage`: Opcional (archivo)
+- `role`: Opcional, debe ser `user` o `admin` (por defecto `user` en el modelo)
+- `profileImage`: Opcional (archivo — gestionado por Multer, no por express-validator)
 
 **Ejemplo de request:**
 ```json
@@ -44,8 +45,8 @@ Request → Validations (express-validator) → handleValidationErrors (middlewa
 
 #### POST `/login`
 **Validaciones:**
-- `email`: Requerido, debe ser un email válido
-- `password`: Requerido
+- `email`: Requerido, debe ser un email válido (se normaliza a minúsculas)
+- `password`: Requerido, no puede estar vacío
 
 **Ejemplo de request:**
 ```json
@@ -60,8 +61,9 @@ Request → Validations (express-validator) → handleValidationErrors (middlewa
 #### PUT `/me`
 **Validaciones:**
 - `name`: Opcional, 2-100 caracteres si se proporciona
-- `email`: Opcional, debe ser email válido si se proporciona
-- `profileImage`: Opcional (archivo)
+- `email`: Opcional, debe ser email válido si se proporciona (se normaliza a minúsculas)
+- `role`: Opcional, debe ser `user` o `admin` si se proporciona (nota: el controlador ignora/rechaza cambios de rol por esta ruta; ver `updateMyProfile`)
+- `profileImage`: Opcional (archivo — gestionado por Multer, no por express-validator)
 
 **Ejemplo de request:**
 ```json
@@ -73,9 +75,11 @@ Request → Validations (express-validator) → handleValidationErrors (middlewa
 
 #### PUT `/change-password`
 **Validaciones:**
-- `currentPassword`: Requerido
-- `newPassword`: Requerido, mínimo 8 caracteres, diferente al currentPassword
-- `confirmPassword`: Requerido, debe coincidir con newPassword
+- `currentPassword`: Requerido, no puede estar vacío
+- `newPassword`: Requerido, mínimo 8 caracteres
+- `confirmPassword`: Requerido, debe coincidir con `newPassword`
+
+> Nota: la regla `newPassword` incluye un `.not().equals("currentPassword")` que compara contra la cadena literal `"currentPassword"`, no contra el valor real del campo `currentPassword`. En la práctica solo rechaza la contraseña literal `"currentPassword"`, no impide reutilizar la contraseña actual. Corregir esto es un cambio de código fuera del alcance de esta guía (backlog).
 
 **Ejemplo de request:**
 ```json
@@ -99,7 +103,17 @@ Request → Validations (express-validator) → handleValidationErrors (middlewa
 - `tags`: Opcional, array de strings
 - `dimensions.emotional`: Opcional, array de valores válidos: melancholic, euphoric, introspective, energetic, nostalgic, anxious, peaceful, rebellious, angry, joyful, contemplative, dreamy
 - `dimensions.sonic`: Opcional, array de valores válidos: lo-fi, polished, experimental, minimalist, layered, raw, atmospheric, abrasive, dense, spacious, organic, synthetic
-- `coverArt`: Opcional (archivo)
+- `personalNote.content`: Opcional, string
+- `connections`: Opcional, array
+- `connections.*.album`: Opcional, ID de MongoDB válido
+- `connections.*.type`: Opcional, uno de: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples
+- `connections.*.note`: Opcional, string
+- `listeningContext.firstListen`: Opcional, fecha válida (ISO 8601)
+- `listeningContext.lastListen`: Opcional, fecha válida (ISO 8601)
+- `listeningContext.frequency`: Opcional, uno de: once, occasional, regular, obsessive
+- `listeningContext.context`: Opcional, string
+- `rating`: Opcional, número entre 0 y 10 (se convierte a float)
+- `coverArt`: Opcional (archivo — gestionado por Multer, no por express-validator)
 
 **Ejemplo de request:**
 ```json
@@ -119,7 +133,20 @@ Request → Validations (express-validator) → handleValidationErrors (middlewa
 ```
 
 #### PUT `/:id`
-**Validaciones:** Igual que POST pero todos los campos son opcionales
+**Validaciones:** Igual que POST pero todos los campos son opcionales (incluidos `title`, `artists`, `format` y `releaseDate`, que en POST son requeridos)
+
+### Album Connections (`/api/v1/albums/:id/connections`)
+
+#### POST `/:id/connections`
+**Validaciones (`addConnectionValidations`):**
+- `targetAlbumId`: Requerido, ID de MongoDB válido
+- `type`: Requerido, uno de: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples
+- `note`: Opcional, string
+
+#### PUT `/:id/connections/:connectionId`
+**Validaciones (`updateConnectionValidations`):**
+- `type`: Opcional, uno de: influences, similar-to, contrasts-with, evokes, progression, thematic, discovered-through, samples
+- `note`: Opcional, string
 
 ## Manejo de Errores de Validación
 

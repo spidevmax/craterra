@@ -7,8 +7,7 @@ Cada bloque está listo para copiar/pegar a Codex tal cual.
 
 ## Estado
 
-- [ ] **P0-3 (BLOQUEANTE DE ENTREGA)** — `.env` y `seeds` están en `.gitignore`. El enunciado exige subir el `.env` real (no un `.env.example`) y el script de seeder (`src/utils/seeds/seedDB.js`, referenciado en package.json pero ausente del repo por estar ignorado). Sin esto, el corrector no puede levantar el proyecto ni ver el seeder. Acción: quitar ambas líneas del `.gitignore` y comprometer los archivos reales.
-- [ ] **P0-4** — Falta array de datos de otra colección en el modelo `User` (requisito explícito del enunciado). Decisión: `favorites: [ObjectId ref Album]`. Especificación completa en la sección P0-4 más abajo.
+- [x] P0-4 — Array `favorites` en User implementado (schema + getFavorites/addFavorite/removeFavorite con $addToSet + rutas/Swagger + limpieza de huérfanos extendida en album.controller.js y admin.controller.js). favorites.test.js creado, 6/6 criterios cubiertos, verificado contra la BD real, no solo la respuesta.
 - [x] P0-1 — Conexiones huérfanas al borrar un álbum (fijo en album.controller.js y admin.controller.js)
 - [x] P0-2 — csv.upload.js devolvía 500 en vez de 400 (fijo, + wrapper handleCSVUpload para errores de Multer)
 - [x] P1-1 — Tests de import.controller.js (import.test.js creado)
@@ -17,11 +16,13 @@ Cada bloque está listo para copiar/pegar a Codex tal cual.
 - [x] P1-2b — Desfase de "13 columnas" (Swagger de album.routes.js actualizado a las 21 reales; bloque duplicado/desactualizado eliminado de albums.test.js). El "13 columnas" en el enunciado original de este ticket queda como registro histórico a propósito, no se corrige retroactivamente.
 - [ ] (Backlog, Día 6 — regresión) Biome falla en albums.test.js (~línea 237, test del grafo) por formato, preexistente y sin relación con export. Se arregla con `npx biome check --write`.
 - [x] P1-3 — **No aplica, cerrado sin implementar.** El enunciado dice explícitamente que un admin puede eliminar/cambiar el rol de "cualquier usuario" sin excepción. Añadir un guard de auto-protección contradiría el requisito literal. Ver sección P1-3 más abajo para el razonamiento completo.
-- [ ] P2-1 — README sin tablas de Admin/Users
-- [ ] P2-2 — Falta `.env.example` (nota: distinto de P0-3, que exige el `.env` real; puede hacerse igualmente por buena práctica de cara a un uso futuro fuera del contexto escolar)
-- [ ] P2-3 — Sincronizar VALIDATION_GUIDE.md
+- [x] P2-1 — README sin tablas de Admin/Users (añadidas tablas Users y Admin verificadas contra user.routes.js/admin.routes.js; incluye favorites y campo `email` en update de perfil)
+- [x] P2-2 — Falta `.env.example` (creado en la raíz con las 7 vars que lee el código, incluida `FRONTEND_URL` que no estaba documentada; solo placeholders; no está en `.gitignore`)
+- [x] P2-3 — Sincronizar VALIDATION_GUIDE.md (sincronizado campo por campo; documentados personalNote/connections/listeningContext/rating y el `role`; añadida sección Album Connections; anotado el bug de `.equals("currentPassword")` sin tocar el archivo de validaciones)
+- [x] P2-4 — Revisar `craterra.insomnia.json` vs. rutas reales (cross-check contra los 4 routers: cobertura al 100% tras añadir las 3 requests de favorites de P0-4 —Get/Add/Remove favorites en la carpeta Users— que faltaban por ser posteriores al export. Las requests restantes de la carpeta Errors son tests negativos intencionados, no endpoints faltantes. JSON validado.)
 - [ ] (Backlog, post-entrega) Rating no numérico se descarta en silencio en import — considerar mover a `errors`
 - [ ] (Backlog, post-entrega) Matching de artists en duplicados es exacto por $size — créditos inconsistentes entre exports de Notion pueden seguir produciendo cuasi-duplicados; heredado de postAlbum, no introducido por este fix
+- [ ] (Backlog, post-entrega) `changePasswordValidations.newPassword` usa `.not().equals("currentPassword")` que compara contra la cadena literal `"currentPassword"`, no contra el valor real del campo. En la práctica solo rechaza la contraseña literal `"currentPassword"`; no impide reutilizar la contraseña actual. Fix: sustituir por un `.custom((value, { req }) => value !== req.body.currentPassword)`. Encontrado durante P2-3; documentado en VALIDATION_GUIDE.md. Archivo: `src/api/validations/user.validations.js`.
 
 ---
 
