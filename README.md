@@ -62,7 +62,7 @@ Craterra is built for music enthusiasts who want to:
 
 **Documentation**
 - Swagger/OpenAPI specs for all endpoints
-- Input validation rules documented in [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
+- Input validation on all write endpoints (express-validator)
 - Comprehensive error handling
 
 **Testing**
