@@ -56,9 +56,17 @@ Craterra is built for music enthusiasts who want to:
 - Multiple genres, labels, artists per album
 - Rating (0–10), favourite flag, release country, external URL
 
+**Security**
+- Rate limiting on all endpoints (stricter on auth routes)
+- Passwords hashed with bcrypt and never returned in responses
+
 **Documentation**
 - Swagger/OpenAPI specs for all endpoints
+- Input validation rules documented in [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
 - Comprehensive error handling
+
+**Testing**
+- Jest + Supertest suite covering auth, albums, connections, users, admin, import and export
 
 ## Tech Stack
 
@@ -100,10 +108,13 @@ craterra/
 │   │       ├── album.upload.js   # Cloudinary image upload
 │   │       ├── user.upload.js
 │   │       └── csv.upload.js     # CSV memory upload (import)
+│   ├── tests/                 # Jest + Supertest test suite
 │   └── utils/                 # Helpers (errors, responses, tokens, seeds)
+├── app.js                     # Express app setup (CORS, rate limiting, routes)
 ├── index.js                   # Server entry point
 ├── package.json
-├── .env                       # Environment variables (not in repo)
+├── .env.example               # Template for environment variables
+├── jest.config.js             # Test runner config
 └── biome.json                 # Formatting & linting config
 ```
 
@@ -143,10 +154,17 @@ Server runs at `http://localhost:8080` by default.
 
 ## Environment Variables
 
-Create a `.env` file in the root directory:
+Copy `.env.example` to `.env` and fill in your own values:
+
+```bash
+cp .env.example .env
+```
 
 ```env
 PORT=8080
+
+# Frontend origin allowed by CORS
+FRONTEND_URL=http://localhost:5173
 
 DB_URL=mongodb://localhost:27017/craterra
 # OR for Atlas:
@@ -171,6 +189,14 @@ npm start
 # Seed database with initial data
 npm run seedDB
 ```
+
+## Testing
+
+```bash
+npm test
+```
+
+The suite uses Jest and Supertest, running against an in-memory MongoDB instance — no real database or Cloudinary account is required. Uploads are stubbed in test mode.
 
 ## API Documentation
 
@@ -323,6 +349,11 @@ The exported CSV uses the same column names as the Notion import format, so it c
 - **Strict ownership:** Users can only see, edit, and delete their own albums
 - **JWT authentication:** All album endpoints require a valid token
 - **Cloudinary cleanup:** Album deletion automatically removes cover art
+- **Referential cleanup:** Deleting an album also removes it from other albums' connections and from every user's favorites
+- **Rate limiting:** 100 requests per 15 min on API routes, 10 per 15 min on auth routes
+- **Password safety:** Hashed with bcrypt, excluded from queries by default (`select: false`)
+
+Rate-limited responses return `429` with the standard error format.
 
 ## Error Handling
 
@@ -338,6 +369,7 @@ Common status codes:
 - `401` — Unauthorized (missing or invalid token)
 - `403` — Forbidden (not album owner)
 - `404` — Resource not found
+- `429` — Too many requests (rate limit exceeded)
 - `500` — Server error
 
 ## License
