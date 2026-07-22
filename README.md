@@ -304,22 +304,20 @@ The exported CSV uses the same column names as the Notion import format, so it c
 ```js
 {
   title: String,              // required
-  artists: [String],
+  artists: [String],          // required
   format: String,             // LP | EP | Reissue | Live | Compilation | Box Set |
                               // Holiday | Instrumental | Remix | Soundtrack | Mixtape
   releaseDate: Date,
   labels: [String],
   genres: [String],
-  tags: [String],
+  scenes: [String],
+  movements: [String],
   coverArtUrl: String,        // Cloudinary URL
-  releaseCountry: String,
-  externalUrl: String,        // e.g. Apple Music / Spotify link
-  rating: Number,             // 0–10
-  favourite: Boolean,
+  coverArtId: String,         // Cloudinary public_id (for cleanup on delete)
   personalNote: {
     content: String,
     lastEdited: Date,
-    wordCount: Number         // auto-calculated on save
+    wordCount: Number         // auto-calculated on save (pre-save hook)
   },
   dimensions: {
     emotional: [String],      // melancholic | euphoric | introspective | energetic |
@@ -329,19 +327,26 @@ The exported CSV uses the same column names as the Notion import format, so it c
                               // layered | raw | atmospheric | abrasive |
                               // dense | spacious | organic | synthetic
   },
+  tags: [String],
+  connections: [{
+    album: ObjectId,          // ref: Album
+    type: String,             // influences | similar-to | contrasts-with | evokes |
+                              // progression | thematic | discovered-through | samples
+    note: String
+  }],
   listeningContext: {
     firstListen: Date,
     lastListen: Date,
     frequency: String,        // once | occasional | regular | obsessive
     context: String
   },
-  connections: [{
-    album: ObjectId,
-    type: String,             // influences | similar-to | contrasts-with | evokes |
-                              // progression | thematic | discovered-through | samples
-    note: String
-  }]
+  releaseCountry: String,
+  externalUrl: String,        // e.g. Apple Music / Spotify link
+  rating: Number,             // 0–10
+  favourite: Boolean,         // default: false
+  addedBy: ObjectId           // required, ref: User (album owner)
 }
+// Plus createdAt / updatedAt timestamps (versionKey disabled)
 ```
 
 ## Ownership & Security
